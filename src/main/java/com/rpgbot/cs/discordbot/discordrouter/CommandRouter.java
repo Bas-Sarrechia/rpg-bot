@@ -2,8 +2,6 @@ package com.rpgbot.cs.discordbot.discordrouter;
 
 import com.rpgbot.cs.discordbot.services.BotService;
 import com.rpgbot.cs.discordbot.services.CommandService;
-import de.btobastian.sdcf4j.Command;
-import de.btobastian.sdcf4j.CommandExecutor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +9,7 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 
 @Component
-public class CommandRouter implements CommandExecutor {
+public class CommandRouter {
     private final BotService botService;
     private final CommandService commandService;
 
@@ -20,7 +18,7 @@ public class CommandRouter implements CommandExecutor {
         this.commandService = commandService;
     }
 
-    @Command(aliases = "!ping")
+    @PostConstruct
     private void addCommandListener() {
         this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
             String message = messageCreateEvent.getMessageContent().strip();
@@ -44,4 +42,5 @@ public class CommandRouter implements CommandExecutor {
             }
         });
     }
+
 }
