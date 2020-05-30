@@ -1,6 +1,6 @@
 package com.rpgbot.cs.discordbot;
 
-import com.rpgbot.cs.discordbot.services.BotService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
