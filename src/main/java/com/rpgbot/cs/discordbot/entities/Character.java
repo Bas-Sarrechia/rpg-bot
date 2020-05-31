@@ -15,5 +15,6 @@ public class Character {
     @ManyToOne
     @JoinColumn(nullable = false, name = "user_id")
     private DiscordUser discordUser;
+    private String characterName;
     private boolean isActive;
 }

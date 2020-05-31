@@ -14,6 +14,7 @@ public class Command {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String commandText;
     @Enumerated(EnumType.STRING)
     private CommandType commandType;

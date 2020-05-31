@@ -38,33 +38,10 @@ public class CommandService {
         });
     }
 
-    @PostConstruct
-    private void register(){
-        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!register")) {
-                Optional<User> discordUser = messageCreateEvent.getMessageAuthor().asUser();
-                if(discordUser.isPresent()){
-                   User user = discordUser.get();
-                    DiscordUser.builder()
-                            .id(user.getId())
-                            .preferredColor(Color.pink)
-                            .nickname("")
-                            .build();
-                }
 
-            }
-        });
+    public void addBasicCommandToBot(String command, String respond) {
+        BasicCommand daoCommand = basicCommandDao.findByCommandCommandText(command).orElse(null);
     }
-
-//    public void addBasicCommandToBot(BasicCommand basicCommand) {
-//        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-//            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith(basicCommand.getCommand().getCommandText().toLowerCase())) {
-//                // message             content                              starts with command
-//                messageCreateEvent.getChannel().sendMessage(basicCommand.getResponse());
-////                messageCreateEvent.getChannel().sendMessage("SARA TESTING SHIT");
-//            }
-//        });
-//    }
 
     public void registerBasicCommand(String command, String respond) {
         BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
@@ -75,12 +52,11 @@ public class CommandService {
                         .commandType(CommandType.BASIC)
                         .build())
                 .build());
-
         basicCommandDao.save(basicCommand);
 
     }
 
-    public BasicCommand lookupCommand(String command) {
+    public BasicCommand lookUpCommand(String command) {
         return basicCommandDao.findByCommandCommandText(command).orElse(null);
     }
 

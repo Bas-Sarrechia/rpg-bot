@@ -16,4 +16,5 @@ public class DiscordUser {
     private Long id;
     private Color preferredColor;
     private String nickname;
+    private String image;
 }
