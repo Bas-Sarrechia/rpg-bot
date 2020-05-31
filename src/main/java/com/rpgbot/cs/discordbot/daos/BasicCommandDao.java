@@ -11,6 +11,5 @@ import java.util.Optional;
 @Repository
 public interface BasicCommandDao extends JpaRepository<BasicCommand, Long> {
     List<BasicCommand> findByCommandCommandType(CommandType commandType);
-
-    Optional<BasicCommand> findByCommandCommandText(String command);
+    Optional<BasicCommand> findByCommandCommandText(String commandText);
 }

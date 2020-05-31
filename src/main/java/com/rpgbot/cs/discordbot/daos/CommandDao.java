@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CommandDao extends JpaRepository<Command, Long> {
-
     Optional<Command> findByCommandText(String commandText);
 }
