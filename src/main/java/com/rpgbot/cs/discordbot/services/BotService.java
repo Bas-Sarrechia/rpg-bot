@@ -1,9 +1,6 @@
 package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
-import de.btobastian.sdcf4j.CommandExecutor;
-import de.btobastian.sdcf4j.CommandHandler;
-import de.btobastian.sdcf4j.handler.JavacordHandler;
 import lombok.Getter;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;

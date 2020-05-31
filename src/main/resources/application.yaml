@@ -1,5 +1,6 @@
 discordbot:
-  token: NzE2MDY0MjAzMDE3ODE0MDYw.XtK0Dg.tFz3YeHQxTy8wCe6BKLDtiETEjc
+  token: Njk0ODc0OTI1MTgxNDM1OTI2.XtGTiA.AeedtDX2YonVShPaknPeLpngJy0
+  prefix: '~'
 
 spring:
   datasource:
