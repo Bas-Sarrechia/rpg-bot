@@ -84,20 +84,25 @@ public class CommandService {
         return basicCommandDao.findByCommandCommandText(command).orElse(null);
     }
 
-    public void removeCommand(String commandName) {
+    public boolean removeCommand(String commandName) {
         Optional<Command> command = commandDao.findByCommandText(commandName);
         if (command.isPresent()) {
             commandDao.delete(command.get());
+            return true;
         }
+        return false;
     }
 
-    public void modifyCommand(String command, String respond) {
+    public boolean modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
+            return true;
         }
-
+        return false;
     }
+
+
 }
