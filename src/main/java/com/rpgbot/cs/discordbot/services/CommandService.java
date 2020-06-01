@@ -56,16 +56,6 @@ public class CommandService {
         });
     }
 
-//    public void addBasicCommandToBot(BasicCommand basicCommand) {
-//        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-//            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith(basicCommand.getCommand().getCommandText().toLowerCase())) {
-//                // message             content                              starts with command
-//                messageCreateEvent.getChannel().sendMessage(basicCommand.getResponse());
-////                messageCreateEvent.getChannel().sendMessage("SARA TESTING SHIT");
-//            }
-//        });
-//    }
-
     public void registerBasicCommand(String command, String respond) {
         BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
                 .response(respond)
