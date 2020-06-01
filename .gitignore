@@ -32,3 +32,5 @@ build/
 
 .floo
 .flooignore
+
+application.yaml

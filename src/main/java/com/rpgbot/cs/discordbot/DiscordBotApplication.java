@@ -1,6 +1,5 @@
 package com.rpgbot.cs.discordbot;
 
-import com.rpgbot.cs.discordbot.services.BotService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

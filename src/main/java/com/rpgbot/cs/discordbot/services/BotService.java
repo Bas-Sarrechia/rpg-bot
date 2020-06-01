@@ -4,6 +4,7 @@ import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import lombok.Getter;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ public class BotService {
     @Getter
     private DiscordApi discordApi;
 
+    @Autowired
     public BotService(DiscordBotConfiguration discordBotConfiguration) {
         this.discordBotConfiguration = discordBotConfiguration;
     }

@@ -13,7 +13,12 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>discord-bot</name>
     <description>Demo project for Spring Boot</description>
-
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <properties>
         <java.version>14</java.version>
         <spring-cloud.version>Hoxton.SR4</spring-cloud.version>
@@ -21,56 +26,53 @@
 
     <dependencies>
         <dependency>
+            <groupId>de.btobastian.sdcf4j</groupId>
+            <artifactId>sdcf4j-core</artifactId>
+            <version>v1.0.10</version>
+        </dependency>
+        <dependency>
+            <groupId>de.btobastian.sdcf4j</groupId>
+            <artifactId>sdcf4j-javacord</artifactId>
+            <version>v1.0.10</version>
+        </dependency>
+        <dependency>
             <groupId>org.javacord</groupId>
             <artifactId>javacord</artifactId>
             <version>3.0.6</version>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>dev.miku</groupId>
-            <artifactId>r2dbc-mysql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -89,8 +91,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

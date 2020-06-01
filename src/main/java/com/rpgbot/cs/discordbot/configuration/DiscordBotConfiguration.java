@@ -9,4 +9,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("discordbot")
 public class DiscordBotConfiguration {
     private String token;
+    private String prefix;
 }
