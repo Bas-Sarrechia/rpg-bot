@@ -1,4 +1,4 @@
-package com.rpgbot.cs.discordbot.discordrouter;
+package com.rpgbot.cs.discordbot.commandfactory.commands;
 
 import com.rpgbot.cs.discordbot.commandfactory.AbstractCommandHandler;
 import com.rpgbot.cs.discordbot.commandfactory.ICommandHandler;
