@@ -1,2 +1,2 @@
-INSERT INTO COMMAND(id, command_text, command_type, required_authorization) values (0, 'sara', 'BASIC', 'BASIC')
-INSERT INTO BASIC_COMMAND(id, command_id, response) values (0, 0, 'sara don figured it out')
+INSERT INTO COMMAND(id, command_text, command_type, required_authorization) values (0, 'test', 'BASIC', 'BASIC')
+INSERT INTO BASIC_COMMAND(id, command_id, response, description, usage) values (0, 0, 'Heard ya loud and clear :D', 'This is an example command', '~test')

@@ -23,6 +23,72 @@ public class CommandRouter {
     private final DiscordBotConfiguration discordBotConfiguration;
 
     @PostConstruct
+    public void handleHelpCommand() {
+        this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+           String message = messageCreateEvent.getMessageContent().stripLeading().toLowerCase();
+           if (validateInput(message)) {
+               if (getCommand(message).equals("help")) {
+                   if (message.split(" ").length > 1) {
+                       messageCreateEvent.getChannel().sendMessage(commandService.generateHelpEmbed(message.split(" ")[1]));
+                   }
+               }
+           }
+        });
+    }
+
+    @PostConstruct
+    public void setBasicCommandUsage() {
+        this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+            String message = messageCreateEvent.getMessageContent().strip().toLowerCase();
+            if (validateInput(message)) {
+                if (getCommand(message).equals("setusage")) {
+                    if (message.split(" ").length > 2) {
+                        String command = message.split(" ")[1];
+                        String usage = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
+                        if (commandService.setBasicCommandUsage(command, usage)) {
+                            messageCreateEvent.getChannel().sendMessage(commandService.generateHelpEmbed(command));
+                        } else {
+                            messageCreateEvent.getChannel().sendMessage(new EmbedBuilder().addField("Error", "Command Not Found").setColor(Color.RED));
+                        }
+                    } else {
+                        messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
+                                .setColor(Color.RED)
+                                .addField("How to use this command", discordBotConfiguration.getPrefix() + "setusage <command> <usage>")
+                                .setFooter("adds a usage to the command")
+                        );
+                    }
+                }
+            }
+        });
+    }
+
+    @PostConstruct
+    public void setBasicCommandDescription() {
+        this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+           String message = messageCreateEvent.getMessageContent().stripLeading().toLowerCase();
+           if (validateInput(message)) {
+               if (getCommand(message).equals("setdesc")) {
+                   if (message.split(" ").length > 2) {
+                       String command = message.split(" ")[1];
+                       String description = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
+                       if (commandService.setBasicCommandDescription(command, description)) {
+                           messageCreateEvent.getChannel().sendMessage("Description set - " + command + ": " + description);
+                       } else {
+                           messageCreateEvent.getChannel().sendMessage("Command \"" + command + "\" not found.");
+                       }
+                   } else {
+                       messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
+                               .setColor(Color.RED)
+                               .addField("How to use this command", discordBotConfiguration.getPrefix() + "setdescription <command> <description>")
+                               .setFooter("adds a description to the command")
+                       );
+                   }
+               }
+           }
+        });
+    }
+
+    @PostConstruct
     private void register(){
         this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
             String message = messageCreateEvent.getMessageContent().stripLeading().toLowerCase();
@@ -152,6 +218,32 @@ public class CommandRouter {
             return message.substring(discordBotConfiguration.getPrefix().length());
         }
         return discordBotConfiguration.getPrefix();
+    }
+
+
+    //TODO remove this once no longer necessary
+    @PostConstruct
+    public void getBasicCommandDescription() {
+        this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+           String message = messageCreateEvent.getMessageContent().stripLeading().toLowerCase();
+           if (validateInput(message)) {
+               if (getCommand(message).equals("getdesc")) {
+                   if (message.split(" ").length > 1) {
+                       BasicCommand basicCommand = commandService.lookupCommand(message.split(" ")[1]);
+                       if (basicCommand != null) {
+                           if (basicCommand.getDescription() != null) {
+                               messageCreateEvent.getChannel().sendMessage(message.split(" ")[1] + ": " + basicCommand.getDescription());
+
+                           } else {
+                               messageCreateEvent.getChannel().sendMessage("Description has not been set for command \"" + message.split(" ")[1] + "\"");
+                           }
+                       } else {
+                           messageCreateEvent.getChannel().sendMessage("Command \"" + message.split(" ")[1] + "\" not found.");
+                       }
+                   }
+               }
+           }
+        });
     }
 
 }
