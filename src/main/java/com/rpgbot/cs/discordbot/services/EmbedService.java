@@ -4,6 +4,7 @@ import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
+import com.rpgbot.cs.discordbot.exceptions.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,16 @@ public class EmbedService {
     private final BasicCommandDao basicCommandDao;
     private final DiscordBotConfiguration discordBotConfiguration;
 
-    public EmbedBuilder generateExceptionEmbed(Exception e) {
-        return new EmbedBuilder().setTitle("Error!").setDescription("Command \"" + e.getLocalizedMessage() + "\" not found.").setColor(Color.RED);
+    public EmbedBuilder generateExceptionEmbed(Exception e, ExceptionType type) {
+        String message;
+
+        if (type == ExceptionType.COMMANDNOTFOUND) {
+            message = "Command \"" + e.getLocalizedMessage() + "\" not found.";
+        } else {
+            message = e.getMessage();
+        }
+
+        return new EmbedBuilder().setTitle("Error!").setDescription(message).setColor(Color.RED);
     }
 
     public EmbedBuilder generateBasicHelpEmbed(String commandText) throws CommandNotFoundException {

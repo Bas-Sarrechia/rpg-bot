@@ -3,8 +3,10 @@ package com.rpgbot.cs.discordbot.discordrouter;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.CommandType;
 import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
+import com.rpgbot.cs.discordbot.exceptions.ExceptionType;
 import com.rpgbot.cs.discordbot.services.BotService;
 import com.rpgbot.cs.discordbot.services.EmbedService;
 import com.rpgbot.cs.discordbot.services.CommandService;
@@ -43,7 +45,7 @@ public class CommandRouter {
                            messageCreateEvent.getChannel().sendMessage(embedService.generateBasicHelpEmbed(message.split(" ")[1]));
                        } catch (CommandNotFoundException commandNotFoundException) {
                            // Sends an error message to the chat
-                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException));
+                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException, ExceptionType.COMMANDNOTFOUND));
                        }
                    }
                }
@@ -67,7 +69,7 @@ public class CommandRouter {
                                     .setDescription("Description of \"" + command + "\" set.")
                             );
                         } catch (CommandNotFoundException commandNotFoundException) {
-                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException));
+                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException, ExceptionType.COMMANDNOTFOUND));
                         }
                    } else {
                        messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
@@ -153,7 +155,7 @@ public class CommandRouter {
                         try {
                             commandService.modifyCommand(command, response);
                         } catch (CommandNotFoundException commandNotFoundException) {
-                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException));
+                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException, ExceptionType.COMMANDNOTFOUND));
                         }
                     } else {
                         messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
@@ -181,7 +183,7 @@ public class CommandRouter {
                                     .setDescription("Command removed.")
                             );
                         } catch (CommandNotFoundException commandNotFoundException) {
-                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException));
+                            messageCreateEvent.getChannel().sendMessage(embedService.generateExceptionEmbed(commandNotFoundException, ExceptionType.COMMANDNOTFOUND));
                         }
                     }
                 }
