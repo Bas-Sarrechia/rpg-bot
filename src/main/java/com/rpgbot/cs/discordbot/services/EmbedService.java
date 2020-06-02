@@ -29,6 +29,10 @@ public class EmbedService {
                 message = "Command \"" + e.getLocalizedMessage() + "\" not found.";
                 break;
 
+            case USERNOTFOUND:
+                message = "User not found. Contact a moderator";
+                break;
+
             default:
                 message = e.getMessage();
                 break;
