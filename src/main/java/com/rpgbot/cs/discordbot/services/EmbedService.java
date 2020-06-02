@@ -26,7 +26,7 @@ public class EmbedService {
 
         EmbedBuilder helpEmbed = new EmbedBuilder();
 
-        BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(commandText).orElseThrow(() -> new CommandNotFoundException("Command \"" + commandText + "\" not found."));
+        BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(commandText).orElseThrow(() -> new CommandNotFoundException(commandText));
 
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
