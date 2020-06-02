@@ -15,6 +15,7 @@ public class AbstractCommandHandler {
     private final EmbedGeneratorFactory embedGeneratorFactory;
     private final DiscordBotConfiguration discordBotConfiguration;
 
+    // inits a method to be overwritten
     public void handle(MessageCreateEvent messageCreateEvent, String message){}
 
 }

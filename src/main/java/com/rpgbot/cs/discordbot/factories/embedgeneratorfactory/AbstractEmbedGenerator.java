@@ -15,6 +15,7 @@ public abstract class AbstractEmbedGenerator {
     private final BasicCommandDao basicCommandDao;
     private final DiscordBotConfiguration discordBotConfiguration;
 
+    // builds embed to be overwritten, default embed states that there was a fail
     public EmbedBuilder build(String input) {
         return new EmbedBuilder()
                            .setColor(Color.RED)

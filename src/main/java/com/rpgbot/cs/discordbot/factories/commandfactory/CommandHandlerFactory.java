@@ -18,8 +18,10 @@ public class CommandHandlerFactory {
     private final EmbedGeneratorFactory embedGeneratorFactory;
     private final BasicCommandDao basicCommandDao;
 
+    // returns CommandHandler for each command
     public AbstractCommandHandler get(String command) {
-        switch (command.split(" ")[0]) {
+        // gets command, returns appropriate CommandHandler
+        switch (command) {
             case "addcommand":
                 return new CreateCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
             case "modifycommand":

@@ -18,6 +18,7 @@ public class EmbedGeneratorFactory {
     private final DiscordBotConfiguration discordBotConfiguration;
 
     public AbstractEmbedGenerator get(EmbedType embedType) {
+        // switch based on embed type, returns EmbedGenerator for each type of embed
         switch (embedType) {
             case HELP:
                 return new HelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
