@@ -21,6 +21,5 @@ public class BasicCommand {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Command command;
     private String response;
-    private String description;
-    private String usage;
+
 }

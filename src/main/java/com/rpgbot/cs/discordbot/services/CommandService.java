@@ -36,10 +36,10 @@ public class CommandService {
         basicCommandDao.save(basicCommand);
     }
 
-    public void setBasicCommandDescription(String command, String description) throws CommandNotFoundException {
-        BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotFoundException(command));
-        basicCommand.setDescription(description);
-        basicCommandDao.save(basicCommand);
+    public void setCommandDescription(String commandName, String description) throws CommandNotFoundException {
+        Command command = commandDao.findByCommandText(commandName).orElseThrow(() -> new CommandNotFoundException(commandName));
+        command.setDescription(description);
+        commandDao.save(command);
     }
 
     public BasicCommand lookupCommand(String command) throws CommandNotFoundException {

@@ -63,7 +63,7 @@ public class CommandRouter {
                        String command = message.split(" ")[1];
                        String description = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
                         try {
-                            commandService.setBasicCommandDescription(command, description);
+                            commandService.setCommandDescription(command, description);
                             messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                                     .setTitle("Success!")
                                     .setDescription("Description of \"" + command + "\" set.")

@@ -15,6 +15,8 @@ public class Command {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String commandText;
+    private String description;
+    private String usage;
     @Enumerated(EnumType.STRING)
     private CommandType commandType;
     @Enumerated(EnumType.STRING)

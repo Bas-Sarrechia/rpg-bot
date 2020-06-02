@@ -41,7 +41,7 @@ public class EmbedService {
                 .setColor(Color.GREEN)
                 .setTitle(discordBotConfiguration.getPrefix() + commandText)
                 .addField("USAGE", discordBotConfiguration.getPrefix() + commandText)
-                .setDescription(basicCommand.getDescription() != null ? basicCommand.getDescription() : "Description has not been set yet.");
+                .setDescription(basicCommand.getCommand().getDescription() != null ? basicCommand.getCommand().getDescription() : "Description has not been set yet.");
 
     }
 }
