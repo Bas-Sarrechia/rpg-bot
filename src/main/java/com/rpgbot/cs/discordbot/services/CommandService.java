@@ -4,6 +4,7 @@ import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
 import com.rpgbot.cs.discordbot.entities.*;
+import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
@@ -32,81 +33,28 @@ public class CommandService {
                         .commandType(CommandType.BASIC)
                         .build())
                 .build());
-
         basicCommandDao.save(basicCommand);
-
     }
 
-    public boolean setBasicCommandDescription(String command, String description) {
-        Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
-        if (basicCommandOptional.isPresent()) {
-            BasicCommand basicCommand = basicCommandOptional.get();
-            basicCommand.setDescription(description);
-            basicCommandDao.save(basicCommand);
-            return true;
-        }
-        return false;
+    public void setBasicCommandDescription(String command, String description) throws CommandNotFoundException {
+        BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotFoundException(command));
+        basicCommand.setDescription(description);
+        basicCommandDao.save(basicCommand);
     }
 
-    public boolean setBasicCommandUsage(String command, String usage) {
-        Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
-        if (basicCommandOptional.isPresent()) {
-            BasicCommand basicCommand = basicCommandOptional.get();
-            basicCommand.setUsage(usage);
-            basicCommandDao.save(basicCommand);
-            return true;
-        }
-        return false;
+    public BasicCommand lookupCommand(String command) throws CommandNotFoundException {
+        return basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotFoundException(command));
     }
 
-    public BasicCommand lookupCommand(String command) {
-        return basicCommandDao.findByCommandCommandText(command).orElse(null);
+    public void removeCommand(String commandName) throws CommandNotFoundException {
+        Command command = commandDao.findByCommandText(commandName).orElseThrow(() -> new CommandNotFoundException(commandName));
+        commandDao.delete(command);
     }
 
-    public boolean removeCommand(String commandName) {
-        Optional<Command> command = commandDao.findByCommandText(commandName);
-        if (command.isPresent()) {
-            commandDao.delete(command.get());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean modifyCommand(String command, String respond) {
-        Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
-        if (basicCommandOptional.isPresent()) {
-            BasicCommand basicCommand = basicCommandOptional.get();
-            basicCommand.setResponse(respond);
-            basicCommandDao.save(basicCommand);
-            return true;
-        }
-        return false;
-    }
-
-    public EmbedBuilder generateHelpEmbed(String commandText) {
-
-        EmbedBuilder helpEmbed = new EmbedBuilder();
-
-        Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(commandText);
-        if (basicCommandOptional.isPresent()) {
-            helpEmbed.setColor(Color.GREEN);
-            helpEmbed.setTitle(discordBotConfiguration.getPrefix() + commandText);
-            BasicCommand basicCommand = basicCommandOptional.get();
-            if (basicCommand.getDescription() != null) {
-                helpEmbed.setDescription(basicCommand.getDescription());
-            } else {
-                helpEmbed.setDescription("Description has not yet been set.");
-            }
-            if (basicCommand.getUsage() != null) {
-                helpEmbed.addField("USAGE", basicCommand.getUsage());
-            } else {
-                helpEmbed.addField("USAGE", "Usage has not been defined yet.");
-            }
-        } else {
-            helpEmbed.addField("Error!", "Command \"" + commandText + "\" not found.");
-            helpEmbed.setColor(Color.RED);
-        }
-        return helpEmbed;
+    public void modifyCommand(String command, String respond) throws CommandNotFoundException {
+        BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotFoundException(command));
+        basicCommand.setResponse(respond);
+        basicCommandDao.save(basicCommand);
     }
 
 }
