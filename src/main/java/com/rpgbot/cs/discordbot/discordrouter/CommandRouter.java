@@ -2,25 +2,61 @@ package com.rpgbot.cs.discordbot.discordrouter;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.services.BotService;
 import com.rpgbot.cs.discordbot.services.CommandService;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.user.User;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class CommandRouter {
     private final BotService botService;
     private final CommandService commandService;
     private final DiscordBotConfiguration discordBotConfiguration;
 
-    public CommandRouter(BotService botService, CommandService commandService, DiscordBotConfiguration discordBotConfiguration) {
-        this.botService = botService;
-        this.commandService = commandService;
-        this.discordBotConfiguration = discordBotConfiguration;
+    @PostConstruct
+    private void register(){
+        this.botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+            String message = messageCreateEvent.getMessageContent().stripLeading().toLowerCase();
+            if (validateInput(message)) {
+                if (getCommand(message).equals("register")) {
+                    Optional<User> discordUser = messageCreateEvent.getMessageAuthor().asUser();
+                    if(discordUser.isPresent()){
+                        User user = discordUser.get();
+                        DiscordUser.builder()
+                                .id(user.getId())
+                                .preferredColor(Color.pink)
+                                .nickname("")
+                                .build();
+                    }
+                }
+            }
+
+        });
+    }
+
+    @PostConstruct
+    private void addCharacterSelectionMenu(){
+        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
+            String message = messageCreateEvent.getMessageContent().toLowerCase().stripLeading();
+            if (validateInput(message)) {
+                if (getCommand(message).equals("characters")) {
+                    messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
+                    .setColor(Color.PINK)
+                    .setAuthor("Hi")
+                );
+
+                }
+            }
+        });
     }
 
     @PostConstruct

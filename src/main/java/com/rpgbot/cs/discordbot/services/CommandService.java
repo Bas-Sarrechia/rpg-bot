@@ -3,6 +3,7 @@ package com.rpgbot.cs.discordbot.services;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
 import com.rpgbot.cs.discordbot.entities.*;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.springframework.stereotype.Service;
@@ -14,47 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CommandService {
     private final BotService botService;
     private final BasicCommandDao basicCommandDao;
     private final CommandDao commandDao;
-
-    public CommandService(BotService botService, BasicCommandDao basicCommandDao, CommandDao commandDao) {
-        this.botService = botService;
-        this.basicCommandDao = basicCommandDao;
-        this.commandDao = commandDao;
-    }
-
-    @PostConstruct
-    private void addCharacterSelectionMenu(){
-        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!characters")) {
-
-                messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
-                        .setColor(Color.PINK)
-                        .setAuthor("Hi")
-                        );
-            }
-        });
-    }
-
-    @PostConstruct
-    private void register(){
-        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!register")) {
-                Optional<User> discordUser = messageCreateEvent.getMessageAuthor().asUser();
-                if(discordUser.isPresent()){
-                   User user = discordUser.get();
-                    DiscordUser.builder()
-                            .id(user.getId())
-                            .preferredColor(Color.pink)
-                            .nickname("")
-                            .build();
-                }
-
-            }
-        });
-    }
 
     public void registerBasicCommand(String command, String respond) {
         BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
