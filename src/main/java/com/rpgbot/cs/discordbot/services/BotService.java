@@ -20,6 +20,7 @@ public class BotService {
 
     @PostConstruct
     private void init() {
+        // logs bot into discord
         this.discordApi = new DiscordApiBuilder().setToken(discordBotConfiguration.getToken()).login().join();
     }
 }

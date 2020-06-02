@@ -19,24 +19,31 @@ public class EmbedService {
     private final BasicCommandDao basicCommandDao;
     private final DiscordBotConfiguration discordBotConfiguration;
 
+    // generates exception embed
     public EmbedBuilder generateExceptionEmbed(Exception e, ExceptionType type) {
+        // instantiates string
         String message;
+        // sets message depending on enum value
+        switch (type) {
+            case COMMANDNOTFOUND:
+                message = "Command \"" + e.getLocalizedMessage() + "\" not found.";
+                break;
 
-        if (type == ExceptionType.COMMANDNOTFOUND) {
-            message = "Command \"" + e.getLocalizedMessage() + "\" not found.";
-        } else {
-            message = e.getMessage();
+            default:
+                message = e.getMessage();
+                break;
         }
-
+        // returns error embed
         return new EmbedBuilder().setTitle("Error!").setDescription(message).setColor(Color.RED);
     }
 
+    // generates help embed for static/basic commands, throws CommandNotFoundException
     public EmbedBuilder generateBasicHelpEmbed(String commandText) throws CommandNotFoundException {
-
+        //instantiates embed
         EmbedBuilder helpEmbed = new EmbedBuilder();
-
+        // searches for command, throws exception if not found
         BasicCommand basicCommand = basicCommandDao.findByCommandCommandText(commandText).orElseThrow(() -> new CommandNotFoundException(commandText));
-
+        //constructs and returns embed
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle(discordBotConfiguration.getPrefix() + commandText)
