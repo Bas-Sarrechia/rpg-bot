@@ -1,19 +1,18 @@
-package com.rpgbot.cs.discordbot.commandfactory.commands;
+package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
-import com.rpgbot.cs.discordbot.commandfactory.AbstractCommandHandler;
-import com.rpgbot.cs.discordbot.commandfactory.ICommandHandler;
+import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
+import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
 import com.rpgbot.cs.discordbot.services.CommandService;
-import com.rpgbot.cs.discordbot.services.EmbedService;
-import org.aspectj.bridge.Message;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 public class StaticCommandHandler extends AbstractCommandHandler implements ICommandHandler {
 
-    public StaticCommandHandler(CommandService commandService, EmbedService embedService, DiscordBotConfiguration discordBotConfiguration) {
-        super(commandService, embedService, discordBotConfiguration);
+    public StaticCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration) {
+        super(commandService, embedGeneratorFactory, discordBotConfiguration);
     }
 
     @Override

@@ -1,12 +1,12 @@
-package com.rpgbot.cs.discordbot.commandfactory.commands;
+package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
-import com.rpgbot.cs.discordbot.commandfactory.AbstractCommandHandler;
-import com.rpgbot.cs.discordbot.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
-import com.rpgbot.cs.discordbot.exceptions.ExceptionType;
+import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
+import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.CommandService;
-import com.rpgbot.cs.discordbot.services.EmbedService;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.stereotype.Component;
@@ -15,11 +15,11 @@ import java.awt.*;
 import java.util.Arrays;
 
 @Component
-
 public class ModifyCommandHandler extends AbstractCommandHandler implements ICommandHandler {
 
-    public ModifyCommandHandler(CommandService commandService, EmbedService embedService, DiscordBotConfiguration discordBotConfiguration) {
-        super(commandService, embedService, discordBotConfiguration);
+
+    public ModifyCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration) {
+        super(commandService, embedGeneratorFactory, discordBotConfiguration);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ModifyCommandHandler extends AbstractCommandHandler implements ICom
                         .setDescription("Command added: " + command));
             } catch (CommandNotFoundException commandNotFoundException) {
                 // generates error embed
-                messageCreateEvent.getChannel().sendMessage(super.getEmbedService().generateExceptionEmbed(commandNotFoundException, ExceptionType.COMMANDNOTFOUND));
+                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().get(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
             }
         } else {
             // explains how to use command if not enough args

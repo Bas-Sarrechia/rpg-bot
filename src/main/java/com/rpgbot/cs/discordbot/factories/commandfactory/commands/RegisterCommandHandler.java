@@ -1,21 +1,22 @@
-package com.rpgbot.cs.discordbot.commandfactory.commands;
+package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
-import com.rpgbot.cs.discordbot.commandfactory.AbstractCommandHandler;
-import com.rpgbot.cs.discordbot.commandfactory.ICommandHandler;
+import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
+import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.exceptions.ExceptionType;
 import com.rpgbot.cs.discordbot.exceptions.UserNotFoundException;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.CommandService;
-import com.rpgbot.cs.discordbot.services.EmbedService;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
 
 public class RegisterCommandHandler extends AbstractCommandHandler implements ICommandHandler {
-    public RegisterCommandHandler(CommandService commandService, EmbedService embedService, DiscordBotConfiguration discordBotConfiguration) {
-        super(commandService, embedService, discordBotConfiguration);
+    public RegisterCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration) {
+        super(commandService, embedGeneratorFactory, discordBotConfiguration);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class RegisterCommandHandler extends AbstractCommandHandler implements IC
                     .build();
         } catch (UserNotFoundException userNotFoundException) {
             // sends error message
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedService().generateExceptionEmbed(userNotFoundException, ExceptionType.COMMANDNOTFOUND));
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().get(EmbedType.USERNOTFOUNDEXCEPTION).build(userNotFoundException.getMessage()));
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.rpgbot.cs.discordbot.discordrouter;
 
-import com.rpgbot.cs.discordbot.commandfactory.CommandHandlerFactory;
+import com.rpgbot.cs.discordbot.factories.commandfactory.CommandHandlerFactory;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.services.BotService;
 import lombok.RequiredArgsConstructor;
