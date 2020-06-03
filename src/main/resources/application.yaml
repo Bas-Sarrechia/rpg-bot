@@ -1,6 +1,15 @@
 discordbot:
-  token: Njk0ODc0OTI1MTgxNDM1OTI2.XtGTiA.AeedtDX2YonVShPaknPeLpngJy0
+  token: 
   prefix: '~'
+
+  # commands
+  createCommand: 'add'
+  helpCommand: 'help'
+  modifyCommand: 'edit'
+  profileCommand: 'profile'
+  registerCommand: 'register'
+  removeCommand: 'remove'
+  setColorCommand: 'setcolor'
 
 spring:
   datasource:
