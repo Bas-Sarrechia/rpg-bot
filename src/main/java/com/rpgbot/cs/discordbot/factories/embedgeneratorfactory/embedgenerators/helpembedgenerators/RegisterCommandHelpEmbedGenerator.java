@@ -18,12 +18,11 @@ public class RegisterCommandHelpEmbedGenerator extends AbstractEmbedGenerator im
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + "register")
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + "register")
+                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getRegisterCommand())
+                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getRegisterCommand())
                 .setFooter("creates a profile for you");
     }
 }

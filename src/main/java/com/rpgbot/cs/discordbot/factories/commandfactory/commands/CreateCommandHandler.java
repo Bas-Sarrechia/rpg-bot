@@ -40,7 +40,7 @@ public class CreateCommandHandler extends AbstractCommandHandler implements ICom
             );
         } else {
             // if there aren't enough arguments, lets the member know how to use the command
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp("addcommand").build("if you're seeing this, please contact an admin!"));
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp(getDiscordBotConfiguration().getCreateCommand()).build("if you're seeing this, please contact an admin!"));
         }
     }
 

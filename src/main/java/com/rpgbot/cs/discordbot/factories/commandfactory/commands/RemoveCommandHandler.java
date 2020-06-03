@@ -37,7 +37,7 @@ public class RemoveCommandHandler extends AbstractCommandHandler implements ICom
                 );
             } catch (CommandNotFoundException commandNotFoundException) {
                 // command not found error
-                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().get(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
+                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().error(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
             }
         }
     }

@@ -10,4 +10,13 @@ import org.springframework.context.annotation.Configuration;
 public class DiscordBotConfiguration {
     private String token;
     private String prefix;
+
+    // commands
+    private String createCommand;
+    private String helpCommand;
+    private String modifyCommand;
+    private String profileCommand;
+    private String registerCommand;
+    private String removeCommand;
+    private String setColorCommand;
 }

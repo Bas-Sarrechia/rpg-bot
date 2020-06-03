@@ -23,7 +23,7 @@ public class HelpCommandHandler  extends AbstractCommandHandler implements IComm
         if (message.split(" ").length > 1) {
             messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp(message.split(" ")[1]).build(message.split(" ")[1]));
         } else {
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp("help").build("if ur seeing this, contact an administrator:)"));
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp(super.getDiscordBotConfiguration().getHelpCommand()).build("if ur seeing this, contact an administrator:)"));
         }
     }
 }

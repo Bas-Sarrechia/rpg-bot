@@ -41,11 +41,11 @@ public class ModifyCommandHandler extends AbstractCommandHandler implements ICom
                         .setDescription("Command added: " + command));
             } catch (CommandNotFoundException commandNotFoundException) {
                 // generates error embed
-                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().get(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
+                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().error(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
             }
         } else {
             // explains how to use command if not enough args
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp("modifycommand").build("if you're seeing this, please contact an administrator :)"));
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp(getDiscordBotConfiguration().getModifyCommand()).build("if you're seeing this, please contact an administrator :)"));
         }
     }
 }

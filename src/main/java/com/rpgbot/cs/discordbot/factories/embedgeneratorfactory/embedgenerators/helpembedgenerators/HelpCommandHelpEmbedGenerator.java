@@ -18,12 +18,11 @@ public class HelpCommandHelpEmbedGenerator extends AbstractEmbedGenerator implem
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(getDiscordBotConfiguration().getPrefix() + "help")
-                .addField("USAGE", getDiscordBotConfiguration().getPrefix() + "help <command>")
+                .setTitle(getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getHelpCommand())
+                .addField("USAGE", getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getHelpCommand() + " <command>")
                 .setFooter("gives usage instructions for a command");
     }
 }

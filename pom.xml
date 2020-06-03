@@ -26,19 +26,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.btobastian.sdcf4j</groupId>
-            <artifactId>sdcf4j-core</artifactId>
-            <version>v1.0.10</version>
-        </dependency>
-        <dependency>
             <groupId>org.beryx</groupId>
             <artifactId>awt-color-factory</artifactId>
             <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>de.btobastian.sdcf4j</groupId>
-            <artifactId>sdcf4j-javacord</artifactId>
-            <version>v1.0.10</version>
         </dependency>
         <dependency>
             <groupId>org.javacord</groupId>
@@ -46,7 +36,6 @@
             <version>3.0.6</version>
             <type>pom</type>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>

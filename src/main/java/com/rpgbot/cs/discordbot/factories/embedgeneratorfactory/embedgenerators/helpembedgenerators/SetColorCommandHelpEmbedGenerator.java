@@ -11,19 +11,18 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 
 @Component
-public class SetColorCommandHelpEmbed extends AbstractEmbedGenerator implements IEmbedGenerator {
+public class SetColorCommandHelpEmbedGenerator extends AbstractEmbedGenerator implements IEmbedGenerator {
 
     @Autowired
-    public SetColorCommandHelpEmbed(BasicCommandDao basicCommandDao, DiscordBotConfiguration discordBotConfiguration) {
+    public SetColorCommandHelpEmbedGenerator(BasicCommandDao basicCommandDao, DiscordBotConfiguration discordBotConfiguration) {
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + "setcolor")
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + "setcolor <color>")
-                .setFooter("changes the embed color of your " + super.getDiscordBotConfiguration().getPrefix() + "profile");
+                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getSetColorCommand())
+                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getSetColorCommand() + " <color>")
+                .setFooter("changes the embed color of your " + super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getProfileCommand());
     }
 }

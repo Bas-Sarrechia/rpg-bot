@@ -45,7 +45,7 @@ public class ProfileCommandHandler extends AbstractCommandHandler implements ICo
             });
         } catch (UserNotFoundException userNotFoundException) {
             // sends user not found embed
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().get(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName()));
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().error(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName()));
         }
     }
 }

@@ -18,12 +18,12 @@ public class CreateCommandHelpEmbedGenerator extends AbstractEmbedGenerator impl
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
+
     public EmbedBuilder build(String command) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(getDiscordBotConfiguration().getPrefix() + "addcommand")
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + "addcommand <command> <response>")
+                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getCreateCommand())
+                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getCreateCommand() + " <command> <response>")
                 .setFooter("adds a static command to the bot");
     }
 }

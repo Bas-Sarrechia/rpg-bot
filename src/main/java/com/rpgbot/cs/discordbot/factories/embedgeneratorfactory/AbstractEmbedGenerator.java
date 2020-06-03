@@ -5,6 +5,8 @@ import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 
@@ -16,11 +18,6 @@ public abstract class AbstractEmbedGenerator {
     private final DiscordBotConfiguration discordBotConfiguration;
 
     // builds embed to be overwritten, default embed states that there was a fail
-    public EmbedBuilder build(String input) {
-        return new EmbedBuilder()
-                           .setColor(Color.RED)
-                           .setTitle("Error!")
-                           .setDescription("EmbedFactory Failed...");
-    }
+    public abstract EmbedBuilder build(String input);
 
 }

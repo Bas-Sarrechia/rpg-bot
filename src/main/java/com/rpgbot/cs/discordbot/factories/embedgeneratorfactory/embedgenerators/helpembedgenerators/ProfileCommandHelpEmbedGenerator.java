@@ -18,12 +18,11 @@ public class ProfileCommandHelpEmbedGenerator extends AbstractEmbedGenerator imp
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + "profile")
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + "profile")
+                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getProfileCommand())
+                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getProfileCommand())
                 .setFooter("retrieves your profile");
     }
 }

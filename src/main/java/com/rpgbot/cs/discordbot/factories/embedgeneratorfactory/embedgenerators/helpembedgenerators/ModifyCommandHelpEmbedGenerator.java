@@ -18,12 +18,11 @@ public class ModifyCommandHelpEmbedGenerator extends AbstractEmbedGenerator impl
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + "modifycommand")
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + "modifycommand <command> <respond>")
+                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getModifyCommand())
+                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getModifyCommand() + " <command> <respond>")
                 .setFooter("modifies a static command in the bot");
     }
 }

@@ -21,7 +21,6 @@ public class StaticHelpEmbedGenerator extends AbstractEmbedGenerator implements 
         super(basicCommandDao, discordBotConfiguration);
     }
 
-    @Override
     public EmbedBuilder build(String command) {
         try {
             BasicCommand basicCommand = super.getBasicCommandDao().findByCommandCommandText(command).orElseThrow(() -> new CommandNotFoundException(command));

@@ -1,51 +1,77 @@
 package com.rpgbot.cs.discordbot.factories.embedgeneratorfactory;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
-import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.CommandNotFoundExceptionEmbedGenerator;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.ErrorExceptionEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.*;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.*;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.UserNotFoundExceptionEmbedGenerator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EmbedGeneratorFactory {
-    private final BasicCommandDao basicCommandDao;
+
+    private HashMap<EmbedType, AbstractEmbedGenerator> exceptionEmbeds;
+    private HashMap<String, AbstractEmbedGenerator> helpEmbeds;
     private final DiscordBotConfiguration discordBotConfiguration;
 
-    public AbstractEmbedGenerator get(EmbedType embedType) {
-        // switch based on embed type, returns EmbedGenerator for each type of embed
-        switch (embedType) {
-            case HELPCOMMAND:
-                return new StaticHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case COMMANDNOTFOUNDEXCEPTION:
-                return new CommandNotFoundExceptionEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case USERNOTFOUNDEXCEPTION:
-                return new UserNotFoundExceptionEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            default:
-                return new ErrorExceptionEmbedGenerator(basicCommandDao, discordBotConfiguration);
-        }
+    // exception embeds
+    private final CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator;
+    private final UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator;
+    private final ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator;
+
+    // help embeds
+    private final CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator;
+    private final HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator;
+    private final ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator;
+    private final ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator;
+    private final RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator;
+    private final RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator;
+    private final SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator;
+    private final StaticHelpEmbedGenerator staticHelpEmbedGenerator;
+
+    @Autowired
+    public EmbedGeneratorFactory(DiscordBotConfiguration discordBotConfiguration, CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator, UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator, ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator, CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator, HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator, ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator, ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator, RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator, RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator, SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator, StaticHelpEmbedGenerator staticHelpEmbedGenerator) {
+
+        this.discordBotConfiguration = discordBotConfiguration;
+        this.commandNotFoundExceptionEmbedGenerator = commandNotFoundExceptionEmbedGenerator;
+        this.userNotFoundExceptionEmbedGenerator = userNotFoundExceptionEmbedGenerator;
+        this.errorExceptionEmbedGenerator = errorExceptionEmbedGenerator;
+        this.createCommandHelpEmbedGenerator = createCommandHelpEmbedGenerator;
+        this.helpCommandHelpEmbedGenerator = helpCommandHelpEmbedGenerator;
+        this.modifyCommandHelpEmbedGenerator = modifyCommandHelpEmbedGenerator;
+        this.profileCommandHelpEmbedGenerator = profileCommandHelpEmbedGenerator;
+        this.registerCommandHelpEmbedGenerator = registerCommandHelpEmbedGenerator;
+        this.removeCommandHelpEmbedGenerator = removeCommandHelpEmbedGenerator;
+        this.setColorCommandHelpEmbedGenerator = setColorCommandHelpEmbedGenerator;
+        this.staticHelpEmbedGenerator = staticHelpEmbedGenerator;
+
+        // exception embeds
+        this.exceptionEmbeds = new HashMap<EmbedType, AbstractEmbedGenerator>();
+
+        exceptionEmbeds.put(EmbedType.COMMANDNOTFOUNDEXCEPTION, commandNotFoundExceptionEmbedGenerator);
+        exceptionEmbeds.put(EmbedType.USERNOTFOUNDEXCEPTION, userNotFoundExceptionEmbedGenerator);
+
+        // help embeds
+        this.helpEmbeds = new HashMap<String, AbstractEmbedGenerator>();
+
+        helpEmbeds.put(discordBotConfiguration.getCreateCommand(), createCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getHelpCommand(), helpCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getModifyCommand(), modifyCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getProfileCommand(), profileCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getRegisterCommand(), registerCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getRemoveCommand(), removeCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getSetColorCommand(), setColorCommandHelpEmbedGenerator);
+    }
+
+    public AbstractEmbedGenerator error(EmbedType type) {
+        if (exceptionEmbeds.containsKey(type)) return exceptionEmbeds.get(type);
+        return errorExceptionEmbedGenerator;
     }
 
     public AbstractEmbedGenerator getHelp(String command) {
-        switch (command) {
-            case "addcommand":
-                return new CreateCommandHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case "helpcommand":
-                return new HelpCommandHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case "modifycommand":
-                return new ModifyCommandHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case "profile":
-                return new ProfileCommandHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case "removecommand":
-                return new RemoveCommandHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-            case "setcolor":
-                return new SetColorCommandHelpEmbed(basicCommandDao, discordBotConfiguration);
-            default:
-                return new StaticHelpEmbedGenerator(basicCommandDao, discordBotConfiguration);
-        }
+        if (helpEmbeds.containsKey(command)) return helpEmbeds.get(command);
+        return staticHelpEmbedGenerator;
     }
+
 }
