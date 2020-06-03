@@ -1,22 +1,29 @@
 package com.rpgbot.cs.discordbot.factories.commandfactory;
 
-import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
-import com.rpgbot.cs.discordbot.factories.commandfactory.commands.*;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
+import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
+import com.rpgbot.cs.discordbot.factories.commandfactory.commands.*;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
+import com.rpgbot.cs.discordbot.services.BotService;
 import com.rpgbot.cs.discordbot.services.CommandService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommandHandlerFactory {
 
     private final CommandService commandService;
     private final DiscordBotConfiguration discordBotConfiguration;
     private final EmbedGeneratorFactory embedGeneratorFactory;
-    private final BasicCommandDao basicCommandDao;
+    private final DiscordUserDao discordUserDao;
+    private final BotService botService;
+
+    public CommandHandlerFactory(CommandService commandService, DiscordBotConfiguration discordBotConfiguration, EmbedGeneratorFactory embedGeneratorFactory, DiscordUserDao discordUserDao, BotService botService) {
+        this.commandService = commandService;
+        this.discordBotConfiguration = discordBotConfiguration;
+        this.embedGeneratorFactory = embedGeneratorFactory;
+        this.discordUserDao = discordUserDao;
+        this.botService = botService;
+    }
 
     // returns CommandHandler for each command
     public AbstractCommandHandler get(String command) {
@@ -29,11 +36,13 @@ public class CommandHandlerFactory {
             case "removecommand":
                 return new RemoveCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
             case "register":
-                return new RegisterCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
-            case "characters":
-                return new CharactersCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
+                return new RegisterCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration, discordUserDao);
+            case "profile":
+                return new ProfileCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration, discordUserDao, botService);
             case "help":
                 return new HelpCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
+            case "setcolor":
+                return new SetColorCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration, discordUserDao);
             default:
                 return new StaticCommandHandler(commandService, embedGeneratorFactory, discordBotConfiguration);
         }

@@ -8,9 +8,13 @@ import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
 import com.rpgbot.cs.discordbot.services.CommandService;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StaticCommandHandler extends AbstractCommandHandler implements ICommandHandler {
 
+    @Autowired
     public StaticCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration) {
         super(commandService, embedGeneratorFactory, discordBotConfiguration);
     }

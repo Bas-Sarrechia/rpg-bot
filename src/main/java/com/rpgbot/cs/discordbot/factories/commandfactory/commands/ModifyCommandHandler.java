@@ -9,6 +9,7 @@ import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.CommandService;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 @Component
 public class ModifyCommandHandler extends AbstractCommandHandler implements ICommandHandler {
 
-
+    @Autowired
     public ModifyCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration) {
         super(commandService, embedGeneratorFactory, discordBotConfiguration);
     }
@@ -44,11 +45,7 @@ public class ModifyCommandHandler extends AbstractCommandHandler implements ICom
             }
         } else {
             // explains how to use command if not enough args
-            messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
-                    .setColor(Color.RED)
-                    .addField("How to use this command", super.getDiscordBotConfiguration().getPrefix() + "modifycommand <command> <respond>")
-                    .setFooter("modifies a static command in the bot")
-            );
+            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp("modifycommand").build("if you're seeing this, please contact an administrator :)"));
         }
     }
 }
