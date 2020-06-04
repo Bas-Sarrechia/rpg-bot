@@ -7,12 +7,10 @@ import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFa
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.CommandService;
 import lombok.RequiredArgsConstructor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.util.Arrays;
 
 @Component
@@ -32,7 +30,7 @@ public class CreateCommandHandler implements ICommandHandler {
             String response = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
             try {
                 // looks up command, throws exception if not found
-                commandService.lookupCommand(command);
+                commandService.lookupStaticCommand(command);
                 // sends error embed
                 messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.GENERICERROR).build("Command already exists: " + command));
             } catch (CommandNotFoundException commandNotFoundException) {

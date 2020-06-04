@@ -1,6 +1,7 @@
 package com.rpgbot.cs.discordbot.factories.embedgeneratorfactory;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.SuccessEmbedGenerator;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.*;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.*;
 import org.springframework.beans.factory.annotation.Autowired;

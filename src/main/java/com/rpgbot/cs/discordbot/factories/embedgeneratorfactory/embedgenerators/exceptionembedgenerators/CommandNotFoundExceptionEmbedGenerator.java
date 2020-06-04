@@ -11,12 +11,7 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommandNotFoundExceptionEmbedGenerator implements IEmbedGenerator {
-
-    private final BasicCommandDao basicCommandDao;
-    private final DiscordBotConfiguration discordBotConfiguration;
-
     @Override
     public EmbedBuilder build(String exceptionText) {
         // returns error embed

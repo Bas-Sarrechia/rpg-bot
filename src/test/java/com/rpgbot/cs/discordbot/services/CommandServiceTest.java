@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +73,7 @@ public class CommandServiceTest {
 
 		CommandNotFoundException commandNotFoundException = assertThrows(
 				CommandNotFoundException.class,
-				() -> { commandService.setDescriptionCommand(command, "random description"); }
+				() -> { commandService.setDescriptionStaticCommand(command, "random description"); }
 		);
 
 		assertEquals(commandNotFoundException.getMessage(), command);
@@ -88,7 +87,7 @@ public class CommandServiceTest {
 				.when(mockCommandDao)
 				.findByCommandText(command);
 
-		commandService.setDescriptionCommand(command, description);
+		commandService.setDescriptionStaticCommand(command, description);
 
 		verify(mockCommand, times(1))
 				.setDescription(description);
@@ -103,7 +102,7 @@ public class CommandServiceTest {
 				.when(mockCommandDao)
 				.findByCommandText(command);
 
-		commandService.setDescriptionCommand(command, description);
+		commandService.setDescriptionStaticCommand(command, description);
 
 		verify(mockCommandDao, times(1))
 				.save(mockCommand);
@@ -120,7 +119,7 @@ public class CommandServiceTest {
 
         CommandNotFoundException commandNotFoundException = assertThrows(
                 CommandNotFoundException.class,
-                () -> { commandService.lookupCommand(command); }
+                () -> { commandService.lookupStaticCommand(command); }
         );
     }
 
@@ -132,7 +131,7 @@ public class CommandServiceTest {
 			    .when(mockBasicCommandDao)
 			    .findByCommandCommandText(command);
 
-	    assertEquals(mockBasicCommand, commandService.lookupCommand(command));
+	    assertEquals(mockBasicCommand, commandService.lookupStaticCommand(command));
     }
 
 

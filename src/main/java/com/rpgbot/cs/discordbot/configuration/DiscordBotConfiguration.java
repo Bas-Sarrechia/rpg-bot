@@ -19,4 +19,5 @@ public class DiscordBotConfiguration {
     private String registerCommand;
     private String removeCommand;
     private String setColorCommand;
+    private String createEmbedCommand;
 }

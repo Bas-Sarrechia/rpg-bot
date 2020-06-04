@@ -30,7 +30,7 @@ public class StaticHelpEmbedGenerator implements IEmbedGenerator {
                     .setFooter(basicCommand.getCommand().getDescription() != null ? basicCommand.getCommand().getDescription() : "Description has not been set yet.");
 
         } catch (CommandNotFoundException commandNotFoundException) {
-            return new CommandNotFoundExceptionEmbedGenerator(basicCommandDao, discordBotConfiguration).build(commandNotFoundException.getMessage());
+            return new CommandNotFoundExceptionEmbedGenerator().build(commandNotFoundException.getMessage());
         }
     }
 

@@ -10,6 +10,7 @@ discordbot:
   registerCommand: 'register'
   removeCommand: 'remove'
   setColorCommand: 'setcolor'
+  createEmbedCommand: 'addembed'
 
 spring:
   datasource:
