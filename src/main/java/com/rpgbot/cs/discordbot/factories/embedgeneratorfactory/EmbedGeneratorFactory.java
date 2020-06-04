@@ -13,7 +13,10 @@ public class EmbedGeneratorFactory {
 
     private HashMap<EmbedType, IEmbedGenerator> exceptionEmbeds;
     private HashMap<String, IEmbedGenerator> helpEmbeds;
-    private final DiscordBotConfiguration discordBotConfiguration;
+    private HashMap<EmbedType, IEmbedGenerator> embeds;
+
+    // embeds
+    private final SuccessEmbedGenerator successEmbedGenerator;
 
     // exception embeds
     private final CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator;
@@ -31,9 +34,8 @@ public class EmbedGeneratorFactory {
     private final StaticHelpEmbedGenerator staticHelpEmbedGenerator;
 
     @Autowired
-    public EmbedGeneratorFactory(DiscordBotConfiguration discordBotConfiguration, CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator, UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator, ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator, CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator, HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator, ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator, ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator, RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator, RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator, SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator, StaticHelpEmbedGenerator staticHelpEmbedGenerator) {
+    public EmbedGeneratorFactory(DiscordBotConfiguration discordBotConfiguration, CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator, UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator, ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator, CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator, HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator, ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator, ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator, RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator, RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator, SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator, StaticHelpEmbedGenerator staticHelpEmbedGenerator, SuccessEmbedGenerator successEmbedGenerator) {
 
-        this.discordBotConfiguration = discordBotConfiguration;
         this.commandNotFoundExceptionEmbedGenerator = commandNotFoundExceptionEmbedGenerator;
         this.userNotFoundExceptionEmbedGenerator = userNotFoundExceptionEmbedGenerator;
         this.errorExceptionEmbedGenerator = errorExceptionEmbedGenerator;
@@ -45,12 +47,19 @@ public class EmbedGeneratorFactory {
         this.removeCommandHelpEmbedGenerator = removeCommandHelpEmbedGenerator;
         this.setColorCommandHelpEmbedGenerator = setColorCommandHelpEmbedGenerator;
         this.staticHelpEmbedGenerator = staticHelpEmbedGenerator;
+        this.successEmbedGenerator = successEmbedGenerator;
+
+        // embeds
+        this.embeds = new HashMap<EmbedType, IEmbedGenerator>();
+
+        embeds.put(EmbedType.SUCCESS, successEmbedGenerator);
 
         // exception embeds
         this.exceptionEmbeds = new HashMap<EmbedType, IEmbedGenerator>();
 
         exceptionEmbeds.put(EmbedType.COMMANDNOTFOUNDEXCEPTION, commandNotFoundExceptionEmbedGenerator);
         exceptionEmbeds.put(EmbedType.USERNOTFOUNDEXCEPTION, userNotFoundExceptionEmbedGenerator);
+        exceptionEmbeds.put(EmbedType.GENERICERROR, errorExceptionEmbedGenerator);
 
         // help embeds
         this.helpEmbeds = new HashMap<String, IEmbedGenerator>();
@@ -62,6 +71,11 @@ public class EmbedGeneratorFactory {
         helpEmbeds.put(discordBotConfiguration.getRegisterCommand(), registerCommandHelpEmbedGenerator);
         helpEmbeds.put(discordBotConfiguration.getRemoveCommand(), removeCommandHelpEmbedGenerator);
         helpEmbeds.put(discordBotConfiguration.getSetColorCommand(), setColorCommandHelpEmbedGenerator);
+    }
+
+    public IEmbedGenerator get(EmbedType type) {
+        if (embeds.containsKey(type)) return embeds.get(type);
+        return errorExceptionEmbedGenerator;
     }
 
     public IEmbedGenerator error(EmbedType type) {

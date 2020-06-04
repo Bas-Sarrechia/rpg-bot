@@ -21,6 +21,6 @@ public class ErrorExceptionEmbedGenerator implements IEmbedGenerator {
         return new EmbedBuilder()
                 .setColor(Color.RED)
                 .setTitle("Error!")
-                .setDescription("EmbedGenerator encountered an error...");
+                .setDescription(input == "" ? "EmbedGenerator encountered an error..." : input);
     }
 }

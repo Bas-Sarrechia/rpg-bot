@@ -4,11 +4,10 @@ import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
 import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.exceptions.UserNotFoundException;
-import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
 import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
-import com.rpgbot.cs.discordbot.services.CommandService;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +17,12 @@ import org.beryx.awt.color.ColorFactory;
 import java.awt.*;
 
 @Component
-public class SetColorCommandHandler extends AbstractCommandHandler implements ICommandHandler {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class SetColorCommandHandler implements ICommandHandler {
 
     private final DiscordUserDao discordUserDao;
-
-    @Autowired
-    public SetColorCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration, DiscordUserDao discordUserDao) {
-        super(commandService, embedGeneratorFactory, discordBotConfiguration);
-        this.discordUserDao = discordUserDao;
-    }
+    private final EmbedGeneratorFactory embedGeneratorFactory;
+    private final DiscordBotConfiguration discordBotConfiguration;
 
     @Override
     public void handle(MessageCreateEvent messageCreateEvent, String message) {
@@ -35,13 +31,13 @@ public class SetColorCommandHandler extends AbstractCommandHandler implements IC
             if (message.split(" ").length > 1) {
                 discordUser.setPreferredColor(ColorFactory.web(message.split(" ")[1]));
                 discordUserDao.save(discordUser);
-                messageCreateEvent.getChannel().sendMessage(new EmbedBuilder().setTitle("Success!").setDescription("Color set to " + message.split(" ")[1]).setColor(Color.GREEN));
+                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Color set: " + message.split(" ")[1]));
             } else {
-                messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().getHelp(getDiscordBotConfiguration().getSetColorCommand()).build("Please contact the administrators..."));
+                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.getHelp(discordBotConfiguration.getSetColorCommand()).build("Please contact the administrators..."));
 
             }
         } catch (UserNotFoundException userNotFoundException) {
-            messageCreateEvent.getChannel().sendMessage(getEmbedGeneratorFactory().error(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName().substring(0, messageCreateEvent.getMessageAuthor().getDiscriminatedName().length() - 5)));
+            messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName().substring(0, messageCreateEvent.getMessageAuthor().getDiscriminatedName().length() - 5)));
         }
     }
 }

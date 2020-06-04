@@ -10,7 +10,7 @@ import java.util.HashMap;
 @Component
 public class CommandHandlerFactory {
 
-    private HashMap<String, AbstractCommandHandler> commandHandlers;
+    private HashMap<String, ICommandHandler> commandHandlers;
     private final DiscordBotConfiguration discordBotConfiguration;
 
     // command handlers
@@ -23,7 +23,7 @@ public class CommandHandlerFactory {
     private final SetColorCommandHandler setColorCommandHandler;
     private final StaticCommandHandler staticCommandHandler;
 
-    public CommandHandlerFactory(HashMap<String, AbstractCommandHandler> commandHandlers, DiscordBotConfiguration discordBotConfiguration, CreateCommandHandler createCommandHandler, ModifyCommandHandler modifyCommandHandler, RemoveCommandHandler removeCommandHandler, RegisterCommandHandler registerCommandHandler, ProfileCommandHandler profileCommandHandler, HelpCommandHandler helpCommandHandler, SetColorCommandHandler setColorCommandHandler, StaticCommandHandler staticCommandHandler) {
+    public CommandHandlerFactory(HashMap<String, ICommandHandler> commandHandlers, DiscordBotConfiguration discordBotConfiguration, CreateCommandHandler createCommandHandler, ModifyCommandHandler modifyCommandHandler, RemoveCommandHandler removeCommandHandler, RegisterCommandHandler registerCommandHandler, ProfileCommandHandler profileCommandHandler, HelpCommandHandler helpCommandHandler, SetColorCommandHandler setColorCommandHandler, StaticCommandHandler staticCommandHandler) {
         this.discordBotConfiguration = discordBotConfiguration;
 
         this.createCommandHandler = createCommandHandler;
@@ -35,7 +35,7 @@ public class CommandHandlerFactory {
         this.setColorCommandHandler = setColorCommandHandler;
         this.staticCommandHandler = staticCommandHandler;
 
-        this.commandHandlers = new HashMap<String, AbstractCommandHandler>();
+        this.commandHandlers = new HashMap<String, ICommandHandler>();
 
     }
 
@@ -51,7 +51,7 @@ public class CommandHandlerFactory {
     }
 
     // returns CommandHandler for each command
-    public AbstractCommandHandler get(String command) {
+    public ICommandHandler get(String command) {
         if (commandHandlers.containsKey(command)) return commandHandlers.get(command);
         return staticCommandHandler;
     }

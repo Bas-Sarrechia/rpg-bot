@@ -4,29 +4,24 @@ import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
 import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.exceptions.UserNotFoundException;
-import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
 import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.BotService;
-import com.rpgbot.cs.discordbot.services.CommandService;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProfileCommandHandler extends AbstractCommandHandler implements ICommandHandler {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ProfileCommandHandler implements ICommandHandler {
 
     private final DiscordUserDao discordUserDao;
     private final BotService botService;
-
-    @Autowired
-    public ProfileCommandHandler(CommandService commandService, EmbedGeneratorFactory embedGeneratorFactory, DiscordBotConfiguration discordBotConfiguration, DiscordUserDao discordUserDao, BotService botService) {
-        super(commandService, embedGeneratorFactory, discordBotConfiguration);
-        this.discordUserDao = discordUserDao;
-        this.botService = botService;
-    }
+    private final EmbedGeneratorFactory embedGeneratorFactory;
+    private final DiscordBotConfiguration discordBotConfiguration;
 
     @Override
     public void handle(MessageCreateEvent messageCreateEvent, String message) {
@@ -38,14 +33,14 @@ public class ProfileCommandHandler extends AbstractCommandHandler implements ICo
             // gets javacord User object using the id
             this.botService.getDiscordApi().getUserById(discordUser.getId()).thenAcceptAsync(user -> {
                 // sets author and picture, then sends embed
-                userEmbed.setAuthor(user.getDiscriminatedName().substring(0, user.getDiscriminatedName().length() - 5), "", user.getAvatar());
+                userEmbed.setAuthor(messageCreateEvent.getMessageAuthor().getName(), "", user.getAvatar());
 
 
                 messageCreateEvent.getChannel().sendMessage(userEmbed);
             });
         } catch (UserNotFoundException userNotFoundException) {
             // sends user not found embed
-            messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().error(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName()));
+            messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.USERNOTFOUNDEXCEPTION).build(messageCreateEvent.getMessageAuthor().getDiscriminatedName()));
         }
     }
 }
