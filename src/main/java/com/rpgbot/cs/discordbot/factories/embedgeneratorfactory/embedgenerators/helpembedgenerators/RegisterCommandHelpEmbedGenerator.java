@@ -2,8 +2,8 @@ package com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.AbstractEmbedGenerator;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.IEmbedGenerator;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,18 +11,16 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 
 @Component
-public class RegisterCommandHelpEmbedGenerator extends AbstractEmbedGenerator implements IEmbedGenerator {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class RegisterCommandHelpEmbedGenerator implements IEmbedGenerator {
 
-    @Autowired
-    public RegisterCommandHelpEmbedGenerator(BasicCommandDao basicCommandDao, DiscordBotConfiguration discordBotConfiguration) {
-        super(basicCommandDao, discordBotConfiguration);
-    }
+    private final DiscordBotConfiguration discordBotConfiguration;
 
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getRegisterCommand())
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getRegisterCommand())
+                .setTitle(discordBotConfiguration.getPrefix() + discordBotConfiguration.getRegisterCommand())
+                .addField("USAGE", discordBotConfiguration.getPrefix() + discordBotConfiguration.getRegisterCommand())
                 .setFooter("creates a profile for you");
     }
 }

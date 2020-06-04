@@ -1,11 +1,11 @@
 package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
+import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
 import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.exceptions.UserNotFoundException;
 import com.rpgbot.cs.discordbot.factories.commandfactory.AbstractCommandHandler;
 import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
-import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.BotService;

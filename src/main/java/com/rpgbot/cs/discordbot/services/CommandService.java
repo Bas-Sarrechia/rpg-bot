@@ -3,18 +3,13 @@ package com.rpgbot.cs.discordbot.services;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
-import com.rpgbot.cs.discordbot.entities.*;
+import com.rpgbot.cs.discordbot.entities.Authorization;
+import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.CommandType;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import javax.persistence.Basic;
-import java.awt.*;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +34,7 @@ public class CommandService {
     }
 
     // sets command description, throws CommandNotFoundException
-    public void setCommandDescription(String commandName, String description) throws CommandNotFoundException {
+    public void setDescriptionCommand(String commandName, String description) throws CommandNotFoundException {
         // finds command, throws exception if doesn't exist
         Command command = commandDao.findByCommandText(commandName).orElseThrow(() -> new CommandNotFoundException(commandName));
         // kinda self-explanatory, but sets the description

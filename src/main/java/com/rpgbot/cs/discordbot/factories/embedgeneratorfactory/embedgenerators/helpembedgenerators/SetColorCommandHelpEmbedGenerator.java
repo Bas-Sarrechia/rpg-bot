@@ -2,8 +2,8 @@ package com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.AbstractEmbedGenerator;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.IEmbedGenerator;
+import lombok.RequiredArgsConstructor;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,18 +11,16 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 
 @Component
-public class SetColorCommandHelpEmbedGenerator extends AbstractEmbedGenerator implements IEmbedGenerator {
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class SetColorCommandHelpEmbedGenerator implements IEmbedGenerator {
 
-    @Autowired
-    public SetColorCommandHelpEmbedGenerator(BasicCommandDao basicCommandDao, DiscordBotConfiguration discordBotConfiguration) {
-        super(basicCommandDao, discordBotConfiguration);
-    }
+    private final DiscordBotConfiguration discordBotConfiguration;
 
     public EmbedBuilder build(String message) {
         return new EmbedBuilder()
                 .setColor(Color.RED)
-                .setTitle(super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getSetColorCommand())
-                .addField("USAGE", super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getSetColorCommand() + " <color>")
-                .setFooter("changes the embed color of your " + super.getDiscordBotConfiguration().getPrefix() + super.getDiscordBotConfiguration().getProfileCommand());
+                .setTitle(discordBotConfiguration.getPrefix() + discordBotConfiguration.getSetColorCommand())
+                .addField("USAGE", discordBotConfiguration.getPrefix() + discordBotConfiguration.getSetColorCommand() + " <color>")
+                .setFooter("changes the embed color of your " + discordBotConfiguration.getPrefix() + discordBotConfiguration.getProfileCommand());
     }
 }

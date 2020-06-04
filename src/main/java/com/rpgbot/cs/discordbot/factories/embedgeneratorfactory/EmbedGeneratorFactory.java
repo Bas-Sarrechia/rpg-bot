@@ -11,8 +11,8 @@ import java.util.HashMap;
 @Component
 public class EmbedGeneratorFactory {
 
-    private HashMap<EmbedType, AbstractEmbedGenerator> exceptionEmbeds;
-    private HashMap<String, AbstractEmbedGenerator> helpEmbeds;
+    private HashMap<EmbedType, IEmbedGenerator> exceptionEmbeds;
+    private HashMap<String, IEmbedGenerator> helpEmbeds;
     private final DiscordBotConfiguration discordBotConfiguration;
 
     // exception embeds
@@ -47,13 +47,13 @@ public class EmbedGeneratorFactory {
         this.staticHelpEmbedGenerator = staticHelpEmbedGenerator;
 
         // exception embeds
-        this.exceptionEmbeds = new HashMap<EmbedType, AbstractEmbedGenerator>();
+        this.exceptionEmbeds = new HashMap<EmbedType, IEmbedGenerator>();
 
         exceptionEmbeds.put(EmbedType.COMMANDNOTFOUNDEXCEPTION, commandNotFoundExceptionEmbedGenerator);
         exceptionEmbeds.put(EmbedType.USERNOTFOUNDEXCEPTION, userNotFoundExceptionEmbedGenerator);
 
         // help embeds
-        this.helpEmbeds = new HashMap<String, AbstractEmbedGenerator>();
+        this.helpEmbeds = new HashMap<String, IEmbedGenerator>();
 
         helpEmbeds.put(discordBotConfiguration.getCreateCommand(), createCommandHelpEmbedGenerator);
         helpEmbeds.put(discordBotConfiguration.getHelpCommand(), helpCommandHelpEmbedGenerator);
@@ -64,12 +64,12 @@ public class EmbedGeneratorFactory {
         helpEmbeds.put(discordBotConfiguration.getSetColorCommand(), setColorCommandHelpEmbedGenerator);
     }
 
-    public AbstractEmbedGenerator error(EmbedType type) {
+    public IEmbedGenerator error(EmbedType type) {
         if (exceptionEmbeds.containsKey(type)) return exceptionEmbeds.get(type);
         return errorExceptionEmbedGenerator;
     }
 
-    public AbstractEmbedGenerator getHelp(String command) {
+    public IEmbedGenerator getHelp(String command) {
         if (helpEmbeds.containsKey(command)) return helpEmbeds.get(command);
         return staticHelpEmbedGenerator;
     }

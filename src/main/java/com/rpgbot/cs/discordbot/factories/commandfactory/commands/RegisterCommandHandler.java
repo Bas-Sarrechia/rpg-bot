@@ -43,7 +43,7 @@ public class RegisterCommandHandler extends AbstractCommandHandler implements IC
             messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle("Success!")
-                .setDescription("User \"" + messageCreateEvent.getMessageAuthor().getDiscriminatedName().substring(0, messageCreateEvent.getMessageAuthor().getDiscriminatedName().length() - 5)) + "\" registered.");
+                .setDescription("User \"" + messageCreateEvent.getMessageAuthor().getName() + "\" registered."));
         } catch (UserNotFoundException userNotFoundException) {
             // sends error message
             messageCreateEvent.getChannel().sendMessage(super.getEmbedGeneratorFactory().error(EmbedType.USERNOTFOUNDEXCEPTION).build(userNotFoundException.getMessage()));
