@@ -11,7 +11,6 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.util.Arrays;
 
 @Component
@@ -32,7 +31,7 @@ public class ModifyCommandHandler implements ICommandHandler {
             String response = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
             try {
                 // modifies command in basicCommandDao, throws CommandNotFoundException
-                commandService.modifyCommand(command, response);
+                commandService.modifyStaticCommand(command, response);
                 // generates success embed
                 messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Command modified: " + command));
             } catch (CommandNotFoundException commandNotFoundException) {

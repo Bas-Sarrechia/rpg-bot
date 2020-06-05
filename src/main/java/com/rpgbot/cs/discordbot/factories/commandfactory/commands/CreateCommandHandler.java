@@ -1,5 +1,6 @@
 package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
+import com.rpgbot.cs.discordbot.exceptions.CommandNameTakenException;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
@@ -29,15 +30,13 @@ public class CreateCommandHandler implements ICommandHandler {
             // gets the command response
             String response = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
             try {
-                // looks up command, throws exception if not found
-                commandService.lookupStaticCommand(command);
-                // sends error embed
-                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.GENERICERROR).build("Command already exists: " + command));
-            } catch (CommandNotFoundException commandNotFoundException) {
-                // registers command to dao
+                // registers command
                 commandService.registerBasicCommand(command, response);
-                // success!
-                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Command added: " + command));
+                // success embed
+                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Basic Command added: "+ command));
+            } catch (CommandNameTakenException commandNameTakenException) {
+                // command name taken exception embed
+                messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.COMMANDNAMETAKENEXCEPTION).build(commandNameTakenException.getMessage()));
             }
         } else {
             // if there aren't enough arguments, lets the member know how to use the command

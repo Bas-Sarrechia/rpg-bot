@@ -2,8 +2,23 @@ package com.rpgbot.cs.discordbot.factories.embedgeneratorfactory;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.SuccessEmbedGenerator;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.*;
-import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.*;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.CommandNameTakenExceptionEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.CommandNotFoundExceptionEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.ErrorExceptionEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.exceptionembedgenerators.UserNotFoundExceptionEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.CreateCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.CreateEmbedCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.EditEmbedHelpCommandEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.HelpCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.ModifyCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.ProfileCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.RegisterCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.RemoveCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.RenameCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.SetColorCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.SetEmbedColorCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.SetEmbedTitleCommandHelpEmbedGenerator;
+import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.embedgenerators.helpembedgenerators.StaticHelpEmbedGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +37,7 @@ public class EmbedGeneratorFactory {
     // exception embeds
     private final CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator;
     private final UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator;
+    private final CommandNameTakenExceptionEmbedGenerator commandNameTakenExceptionEmbedGenerator;
     private final ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator;
 
     // help embeds
@@ -32,13 +48,19 @@ public class EmbedGeneratorFactory {
     private final RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator;
     private final RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator;
     private final SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator;
+    private final CreateEmbedCommandHelpEmbedGenerator createEmbedCommandHelpEmbedGenerator;
+    private final EditEmbedHelpCommandEmbedGenerator editEmbedCommandHelpEmbedGenerator;
+    private final SetEmbedColorCommandHelpEmbedGenerator setEmbedColorCommandHelpEmbedGenerator;
+    private final SetEmbedTitleCommandHelpEmbedGenerator setEmbedTitleCommandHelpEmbedGenerator;
+    private final RenameCommandHelpEmbedGenerator renameCommandHelpEmbedGenerator;
     private final StaticHelpEmbedGenerator staticHelpEmbedGenerator;
 
     @Autowired
-    public EmbedGeneratorFactory(DiscordBotConfiguration discordBotConfiguration, CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator, UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator, ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator, CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator, HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator, ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator, ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator, RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator, RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator, SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator, StaticHelpEmbedGenerator staticHelpEmbedGenerator, SuccessEmbedGenerator successEmbedGenerator) {
+    public EmbedGeneratorFactory(DiscordBotConfiguration discordBotConfiguration, CommandNotFoundExceptionEmbedGenerator commandNotFoundExceptionEmbedGenerator, UserNotFoundExceptionEmbedGenerator userNotFoundExceptionEmbedGenerator, CommandNameTakenExceptionEmbedGenerator commandNameTakenExceptionEmbedGenerator, ErrorExceptionEmbedGenerator errorExceptionEmbedGenerator, CreateCommandHelpEmbedGenerator createCommandHelpEmbedGenerator, HelpCommandHelpEmbedGenerator helpCommandHelpEmbedGenerator, ModifyCommandHelpEmbedGenerator modifyCommandHelpEmbedGenerator, ProfileCommandHelpEmbedGenerator profileCommandHelpEmbedGenerator, RegisterCommandHelpEmbedGenerator registerCommandHelpEmbedGenerator, RemoveCommandHelpEmbedGenerator removeCommandHelpEmbedGenerator, SetColorCommandHelpEmbedGenerator setColorCommandHelpEmbedGenerator, StaticHelpEmbedGenerator staticHelpEmbedGenerator, SuccessEmbedGenerator successEmbedGenerator, CreateEmbedCommandHelpEmbedGenerator createEmbedCommandHelpEmbedGenerator, EditEmbedHelpCommandEmbedGenerator editEmbedCommandHelpEmbedGenerator, SetEmbedColorCommandHelpEmbedGenerator setEmbedColorCommandHelpEmbedGenerator, SetEmbedTitleCommandHelpEmbedGenerator setEmbedTitleCommandHelpEmbedGenerator, RenameCommandHelpEmbedGenerator renameCommandHelpEmbedGenerator) {
 
         this.commandNotFoundExceptionEmbedGenerator = commandNotFoundExceptionEmbedGenerator;
         this.userNotFoundExceptionEmbedGenerator = userNotFoundExceptionEmbedGenerator;
+        this.commandNameTakenExceptionEmbedGenerator = commandNameTakenExceptionEmbedGenerator;
         this.errorExceptionEmbedGenerator = errorExceptionEmbedGenerator;
         this.createCommandHelpEmbedGenerator = createCommandHelpEmbedGenerator;
         this.helpCommandHelpEmbedGenerator = helpCommandHelpEmbedGenerator;
@@ -49,6 +71,11 @@ public class EmbedGeneratorFactory {
         this.setColorCommandHelpEmbedGenerator = setColorCommandHelpEmbedGenerator;
         this.staticHelpEmbedGenerator = staticHelpEmbedGenerator;
         this.successEmbedGenerator = successEmbedGenerator;
+        this.createEmbedCommandHelpEmbedGenerator = createEmbedCommandHelpEmbedGenerator;
+        this.editEmbedCommandHelpEmbedGenerator = editEmbedCommandHelpEmbedGenerator;
+        this.setEmbedColorCommandHelpEmbedGenerator = setEmbedColorCommandHelpEmbedGenerator;
+        this.setEmbedTitleCommandHelpEmbedGenerator = setEmbedTitleCommandHelpEmbedGenerator;
+        this.renameCommandHelpEmbedGenerator = renameCommandHelpEmbedGenerator;
 
         // embeds
         this.embeds = new HashMap<EmbedType, IEmbedGenerator>();
@@ -60,6 +87,7 @@ public class EmbedGeneratorFactory {
 
         exceptionEmbeds.put(EmbedType.COMMANDNOTFOUNDEXCEPTION, commandNotFoundExceptionEmbedGenerator);
         exceptionEmbeds.put(EmbedType.USERNOTFOUNDEXCEPTION, userNotFoundExceptionEmbedGenerator);
+        exceptionEmbeds.put(EmbedType.COMMANDNAMETAKENEXCEPTION,commandNameTakenExceptionEmbedGenerator);
         exceptionEmbeds.put(EmbedType.GENERICERROR, errorExceptionEmbedGenerator);
 
         // help embeds
@@ -72,6 +100,11 @@ public class EmbedGeneratorFactory {
         helpEmbeds.put(discordBotConfiguration.getRegisterCommand(), registerCommandHelpEmbedGenerator);
         helpEmbeds.put(discordBotConfiguration.getRemoveCommand(), removeCommandHelpEmbedGenerator);
         helpEmbeds.put(discordBotConfiguration.getSetColorCommand(), setColorCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getCreateEmbedCommand(), createEmbedCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getSetEmbedDescriptionCommand(), editEmbedCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getSetEmbedColorCommand(), setEmbedColorCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getSetEmbedTitleCommand(), setEmbedTitleCommandHelpEmbedGenerator);
+        helpEmbeds.put(discordBotConfiguration.getRenameCommand(), renameCommandHelpEmbedGenerator);
     }
 
     public IEmbedGenerator get(EmbedType type) {

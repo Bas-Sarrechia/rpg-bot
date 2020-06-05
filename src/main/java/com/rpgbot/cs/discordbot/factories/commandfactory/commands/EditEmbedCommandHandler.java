@@ -1,7 +1,7 @@
 package com.rpgbot.cs.discordbot.factories.commandfactory.commands;
 
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
-import com.rpgbot.cs.discordbot.exceptions.CommandNameTakenException;
+import com.rpgbot.cs.discordbot.entities.EmbedCommand;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import com.rpgbot.cs.discordbot.factories.commandfactory.ICommandHandler;
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFactory;
@@ -16,27 +16,32 @@ import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CreateEmbedCommandHandler implements ICommandHandler {
+public class EditEmbedCommandHandler implements ICommandHandler {
+
 	private final CommandService commandService;
 	private final EmbedGeneratorFactory embedGeneratorFactory;
 	private final DiscordBotConfiguration discordBotConfiguration;
 
 	@Override
 	public void handle(MessageCreateEvent messageCreateEvent, String message) {
-		// verifies there's enough arguments
+		// checks for enough args
 		if (message.split(" ").length > 2) {
-			// gets the command name
+			// gets embed command
 			String command = message.split(" ")[1];
-			// gets the command description
-			String description = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
+			// gets embed description
+			String description = String.join( " ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
 			try {
-				commandService.registerEmbedCommand(command, description);
-			} catch (CommandNameTakenException commandNameTakenException) {
-				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.COMMANDNAMETAKENEXCEPTION).build(commandNameTakenException.getMessage()));
+				// thank heaven for CommandService
+				commandService.setEmbedDescriptionCommand(command, description);
+				// success embed
+				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Embed description edited: " + command));
+			} catch (CommandNotFoundException commandNotFoundException) {
+				// exception embed :D
+				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
 			}
 		} else {
-			// if there aren't enough arguments, lets the member know how to use the command
-			messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.getHelp(discordBotConfiguration.getCreateEmbedCommand()).build("if you're seeing this, please contact an admin!"));
+			// explains how to properly use command
+			messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.getHelp(discordBotConfiguration.getSetEmbedDescriptionCommand()).build("if you're seeing this, ping an admin plzzz :O"));
 		}
 	}
 }

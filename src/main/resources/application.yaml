@@ -9,8 +9,12 @@ discordbot:
   profileCommand: 'profile'
   registerCommand: 'register'
   removeCommand: 'remove'
-  setColorCommand: 'setcolor'
+  setColorCommand: 'profilecolor'
   createEmbedCommand: 'addembed'
+  setEmbedDescriptionCommand: 'editembed'
+  setEmbedColorCommand: 'recolor'
+  setEmbedTitleCommand: 'settitle'
+  renameCommand: 'rename'
 
 spring:
   datasource:

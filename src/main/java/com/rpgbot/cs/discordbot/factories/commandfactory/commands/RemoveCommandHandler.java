@@ -6,12 +6,9 @@ import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedGeneratorFa
 import com.rpgbot.cs.discordbot.factories.embedgeneratorfactory.EmbedType;
 import com.rpgbot.cs.discordbot.services.CommandService;
 import lombok.RequiredArgsConstructor;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.awt.*;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,7 +23,7 @@ public class RemoveCommandHandler implements ICommandHandler {
         if (message.indexOf(" ") > -1) {
             try {
                 // removes command from basicCommandDao, throws CommandNotFoundException
-                commandService.removeCommand(message.split(" ")[1]);
+                commandService.removeStaticCommand(message.split(" ")[1]);
                 // success!
                 messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build("Command removed: " + message.split(" ")[1]));
             } catch (CommandNotFoundException commandNotFoundException) {

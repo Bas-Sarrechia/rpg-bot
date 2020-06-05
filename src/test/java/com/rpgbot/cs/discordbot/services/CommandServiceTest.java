@@ -1,10 +1,12 @@
 package com.rpgbot.cs.discordbot.services;
 
-import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
+import com.rpgbot.cs.discordbot.daos.EmbedCommandDao;
 import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.EmbedCommand;
+import com.rpgbot.cs.discordbot.exceptions.CommandNameTakenException;
 import com.rpgbot.cs.discordbot.exceptions.CommandNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.awt.*;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,19 +36,22 @@ public class CommandServiceTest {
     private final String notCommand = "NotMyCommand";
     private final String response = "MyResponse";
     private final String description = "MyDescription";
+    private final Color color = Color.RED;
 
     @Mock
     private BotService mockBotService;
     @Mock
     private BasicCommandDao mockBasicCommandDao;
     @Mock
-    private CommandDao mockCommandDao;
+    private EmbedCommandDao mockEmbedCommandDao;
     @Mock
-    private DiscordBotConfiguration mockDiscordBotConfiguration;
+    private CommandDao mockCommandDao;
     @Mock
     private Command mockCommand;
     @Mock
     private BasicCommand mockBasicCommand;
+    @Mock
+    private EmbedCommand mockEmbedCommand;
 
     @InjectMocks
     private CommandService commandService;
@@ -54,17 +60,295 @@ public class CommandServiceTest {
     public void setUp() {
         Mockito.reset(
                 mockBasicCommandDao,
+                mockEmbedCommandDao,
                 mockCommand,
                 mockBotService
         );
     }
 
-    //TODO iffy u write tests for registerBasicCommand so i can see how u did it pls
-
-
-    // setDescriptionCommand tests
+    // registerEmbedCommand tests
 	@Test
-	public void setDescriptionCommandShouldThrowCommandNotFoundException()  {
+	public void registerEmbedCommandShouldThrowCommandNameTakenException() {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(command);
+
+    	CommandNameTakenException commandNameTakenException = assertThrows(
+    			CommandNameTakenException.class,
+			    () -> { commandService.registerEmbedCommand(command, response); }
+	    );
+
+    	assertEquals(commandNameTakenException.getMessage(), command);
+	}
+
+	//TODO sara once iffy writes registerBasicCommandShouldSave() read how he did it and do this
+	@Test
+	public void registerEmbedCommandShouldSave() {
+
+	}
+
+    // registerBasicCommand tests
+	@Test
+	public void registerBasicCommandShouldThrowCommandNameTakenException() {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(command);
+
+    	CommandNameTakenException commandNameTakenException = assertThrows(
+    			CommandNameTakenException.class,
+			    () -> { commandService.registerBasicCommand(command, response); }
+	    );
+
+    	assertEquals(commandNameTakenException.getMessage(), command);
+
+	}
+
+	//TODO iffy can u write this test it makes my head hurt trying to figure out
+	@Test
+	public void registerBasicCommandShouldSave() {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(command);
+
+	}
+
+	// setEmbedDescriptionCommand tests
+	@Test
+	public void setEmbedDescriptionCommandShouldThrowCommandNotFoundException() {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(notCommand);
+
+		CommandNotFoundException commandNotFoundException = assertThrows(
+				CommandNotFoundException.class,
+				() -> { commandService.setEmbedDescriptionCommand(command, response); }
+		);
+
+		assertEquals(commandNotFoundException.getMessage(), command);
+	}
+
+	@Test
+	public void setEmbedDescriptionCommandShouldSetDescription() throws CommandNotFoundException {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(command);
+
+		commandService.setEmbedDescriptionCommand(command, response);
+
+		verify(mockEmbedCommand, times(1))
+				.setDescription(response);
+	}
+
+	@Test
+	public void setEmbedDescriptionCommandShouldSave() throws CommandNotFoundException {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(command);
+
+		commandService.setEmbedDescriptionCommand(command, response);
+
+		verify(mockEmbedCommandDao, times(1))
+				.save(mockEmbedCommand);
+
+	}
+
+	// lookupEmbedCommand tests
+	@Test
+	public void lookupEmbedCommandShouldThrowCommandNotFoundException() {
+		Optional<BasicCommand> basicCommandOptional = Optional.of(mockBasicCommand);
+
+		doReturn(basicCommandOptional)
+				.when(mockBasicCommandDao)
+				.findByCommandCommandText(notCommand);
+
+		CommandNotFoundException commandNotFoundException = assertThrows(
+				CommandNotFoundException.class,
+				() -> { commandService.lookupStaticCommand(command); }
+		);
+	}
+
+	@Test
+	public void lookupEmbedCommandShouldReturnCommand() throws CommandNotFoundException {
+		Optional<BasicCommand> mockBasicCommandOptional = Optional.of(mockBasicCommand);
+
+		doReturn(mockBasicCommandOptional)
+				.when(mockBasicCommandDao)
+				.findByCommandCommandText(command);
+
+		assertEquals(mockBasicCommand, commandService.lookupStaticCommand(command));
+	}
+
+	// setEmbedColorCommand tests
+	@Test
+	public void setEmbedColorCommandShouldThrowCommandNotFoundException() {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(notCommand);
+
+		CommandNotFoundException commandNotFoundException = assertThrows(
+				CommandNotFoundException.class,
+				() -> { commandService.setEmbedColorCommand(command, Color.RED); }
+		);
+
+		assertEquals(commandNotFoundException.getMessage(), command);
+	}
+
+	@Test
+	public void setEmbedColorCommandShouldSetColor() throws CommandNotFoundException {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(command);
+
+		commandService.setEmbedColorCommand(command, color);
+
+		verify(mockEmbedCommand, times(1))
+				.setColor(color);
+	}
+
+	@Test
+	public void setEmbedColorCommandShouldSave() throws CommandNotFoundException {
+		Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+		doReturn(mockEmbedCommandOptional)
+				.when(mockEmbedCommandDao)
+				.findByCommandCommandText(command);
+
+		commandService.setEmbedColorCommand(command, color);
+
+		verify(mockEmbedCommandDao, times(1))
+				.save(mockEmbedCommand);
+
+	}
+
+	// setEmbedTitleCommand tests
+	@Test
+	public void setEmbedTitleCommandShouldThrowCommandNotFoundException() {
+    	Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+    	doReturn(mockEmbedCommandOptional)
+			    .when(mockEmbedCommandDao)
+			    .findByCommandCommandText(notCommand);
+
+    	CommandNotFoundException commandNotFoundException = assertThrows(
+    			CommandNotFoundException.class,
+			    () -> { commandService.setEmbedTitleCommand(command, response); }
+	    );
+
+    	assertEquals(commandNotFoundException.getMessage(), command);
+	}
+
+	@Test
+	public void setEmbedTitleCommandShouldSetTitle() throws CommandNotFoundException {
+    	Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+    	doReturn(mockEmbedCommandOptional)
+			    .when(mockEmbedCommandDao)
+			    .findByCommandCommandText(command);
+
+    	commandService.setEmbedTitleCommand(command, response);
+
+    	verify(mockEmbedCommand, times(1))
+			    .setTitle(response);
+	}
+
+	@Test
+	public void setEmbedTitleCommandShouldSave() throws CommandNotFoundException {
+    	Optional<EmbedCommand> mockEmbedCommandOptional = Optional.of(mockEmbedCommand);
+
+    	doReturn(mockEmbedCommandOptional)
+			    .when(mockEmbedCommandDao)
+			    .findByCommandCommandText(command);
+
+    	commandService.setEmbedTitleCommand(command, response);
+
+    	verify(mockEmbedCommandDao, times(1))
+			    .save(mockEmbedCommand);
+
+	}
+
+	// renameCommand tests
+	@Test
+	public void renameCommandShouldThrowCommandNameTakenException() {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(notCommand);
+
+		CommandNameTakenException commandNameTakenException = assertThrows(
+				CommandNameTakenException.class,
+				() -> { commandService.renameCommand(command, notCommand); }
+		);
+
+		assertEquals(commandNameTakenException.getMessage(), notCommand);
+
+	}
+
+	@Test
+	public void renameCommandShouldThrowCommandNotFoundException() throws CommandNotFoundException, CommandNameTakenException {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText("nonexistent");
+
+    	CommandNotFoundException commandNotFoundException = assertThrows(
+    			CommandNotFoundException.class,
+			    () -> { commandService.renameCommand(command, notCommand); }
+	    );
+
+    	assertEquals(commandNotFoundException.getMessage(), command);
+	}
+
+	@Test
+	public void renameCommandShouldSetCommandText() throws CommandNotFoundException, CommandNameTakenException {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(command);
+
+    	commandService.renameCommand(command, notCommand);
+
+    	verify(mockCommand, times(1))
+			    .setCommandText(notCommand);
+
+	}
+
+	@Test
+	public void renameCommandShouldSaveCommand() throws CommandNotFoundException, CommandNameTakenException {
+    	Optional<Command> mockCommandOptional = Optional.of(mockCommand);
+
+    	doReturn(mockCommandOptional)
+			    .when(mockCommandDao)
+			    .findByCommandText(command);
+
+    	commandService.renameCommand(command, notCommand);
+
+    	verify(mockCommandDao, times(1))
+			    .save(mockCommand);
+
+	}
+
+    // setStaticDescriptionCommand tests
+	@Test
+	public void setStaticDescriptionCommandShouldThrowCommandNotFoundException()  {
 		Optional<Command> mockCommandOptional = Optional.of(mockCommand);
 
 		doReturn(mockCommandOptional)
@@ -73,21 +357,21 @@ public class CommandServiceTest {
 
 		CommandNotFoundException commandNotFoundException = assertThrows(
 				CommandNotFoundException.class,
-				() -> { commandService.setDescriptionStaticCommand(command, "random description"); }
+				() -> { commandService.setStaticDescriptionCommand(command, "random description"); }
 		);
 
 		assertEquals(commandNotFoundException.getMessage(), command);
 	}
 
 	@Test
-	public void setDescriptionCommandShouldSetDescription() throws CommandNotFoundException {
+	public void setStaticDescriptionCommandShouldSetDescription() throws CommandNotFoundException {
 		Optional<Command> mockCommandOptional = Optional.of(mockCommand);
 
 		doReturn(mockCommandOptional)
 				.when(mockCommandDao)
 				.findByCommandText(command);
 
-		commandService.setDescriptionStaticCommand(command, description);
+		commandService.setStaticDescriptionCommand(command, description);
 
 		verify(mockCommand, times(1))
 				.setDescription(description);
@@ -102,15 +386,15 @@ public class CommandServiceTest {
 				.when(mockCommandDao)
 				.findByCommandText(command);
 
-		commandService.setDescriptionStaticCommand(command, description);
+		commandService.setStaticDescriptionCommand(command, description);
 
 		verify(mockCommandDao, times(1))
 				.save(mockCommand);
 	}
 
-    // lookupCommand tests
+    // lookupStaticCommand tests
     @Test
-    public void lookupCommandShouldThrowCommandNotFoundException() {
+    public void lookupStaticCommandShouldThrowCommandNotFoundException() {
         Optional<BasicCommand> basicCommandOptional = Optional.of(mockBasicCommand);
 
         doReturn(basicCommandOptional)
@@ -124,7 +408,7 @@ public class CommandServiceTest {
     }
 
     @Test
-    public void lookupCommandShouldReturnCommand() throws CommandNotFoundException {
+    public void lookupStaticCommandShouldReturnCommand() throws CommandNotFoundException {
 	    Optional<BasicCommand> mockBasicCommandOptional = Optional.of(mockBasicCommand);
 
 	    doReturn(mockBasicCommandOptional)
@@ -134,10 +418,9 @@ public class CommandServiceTest {
 	    assertEquals(mockBasicCommand, commandService.lookupStaticCommand(command));
     }
 
-
-    // removeCommand tests
+    // removeStaticCommand tests
     @Test
-    public void removeCommandShouldThrowCommandNotFoundException() {
+    public void removeStaticCommandShouldThrowCommandNotFoundException() {
         Optional<Command> commandOptional = Optional.of(mockCommand);
 
         doReturn(commandOptional)
@@ -146,7 +429,7 @@ public class CommandServiceTest {
 
         CommandNotFoundException commandNotFoundException = assertThrows(
                 CommandNotFoundException.class,
-                () -> { commandService.removeCommand(command); }
+                () -> { commandService.removeStaticCommand(command); }
         );
 
         assertEquals(commandNotFoundException.getMessage(), command);
@@ -154,22 +437,22 @@ public class CommandServiceTest {
     }
 
     @Test
-    public void removeCommandShouldDeleteCommand() throws CommandNotFoundException {
+    public void removeStaticCommandShouldDeleteCommand() throws CommandNotFoundException {
         Optional<Command> commandOptional = Optional.of(mockCommand);
 
         doReturn(commandOptional)
                 .when(mockCommandDao)
                 .findByCommandText(command);
 
-        commandService.removeCommand(command);
+        commandService.removeStaticCommand(command);
 
         verify(mockCommandDao, times(1))
                 .delete(mockCommand);
     }
 
-    // modifyCommand tests
+    // modifyStaticCommand tests
     @Test
-    public void modifyCommandShouldThrowCommandNotFoundException() {
+    public void modifyStaticCommandShouldThrowCommandNotFoundException() {
         Optional<BasicCommand> optional = Optional.of(mockBasicCommand);
 
         doReturn(optional)
@@ -178,14 +461,14 @@ public class CommandServiceTest {
 
         CommandNotFoundException commandNotFoundException = assertThrows(
                 CommandNotFoundException.class,
-                () -> { commandService.modifyCommand(command, response); }
+                () -> { commandService.modifyStaticCommand(command, response); }
         );
 
         assertEquals(commandNotFoundException.getMessage(), command);
     }
 
     @Test
-    public void modifyCommandShouldSetCommandResponse() throws CommandNotFoundException {
+    public void modifyStaticCommandShouldSetCommandResponse() throws CommandNotFoundException {
         BasicCommand mockBasicCommand = mock(BasicCommand.class);
 
         Optional<BasicCommand> mockBasicCommandOptional = Optional.of(mockBasicCommand);
@@ -194,21 +477,21 @@ public class CommandServiceTest {
                 .when(mockBasicCommandDao)
                 .findByCommandCommandText(command);
 
-        commandService.modifyCommand(command, response);
+        commandService.modifyStaticCommand(command, response);
 
         verify(mockBasicCommand , times(1))
                 .setResponse(response);
     }
 
     @Test
-    public void modifyCommandShouldSaveCommand() throws CommandNotFoundException {
+    public void modifyStaticCommandShouldSaveCommand() throws CommandNotFoundException {
         Optional<BasicCommand> mockBasicCommandOptional = Optional.of(mockBasicCommand);
 
         doReturn(mockBasicCommandOptional)
                 .when(mockBasicCommandDao)
                 .findByCommandCommandText(command);
 
-        commandService.modifyCommand(command, response);
+        commandService.modifyStaticCommand(command, response);
 
         verify(mockBasicCommandDao , times(1))
                 .save(mockBasicCommand);

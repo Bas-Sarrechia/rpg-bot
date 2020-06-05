@@ -12,31 +12,36 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CreateEmbedCommandHandler implements ICommandHandler {
+public class RenameCommandCommandHandler implements ICommandHandler {
+
 	private final CommandService commandService;
 	private final EmbedGeneratorFactory embedGeneratorFactory;
 	private final DiscordBotConfiguration discordBotConfiguration;
 
 	@Override
 	public void handle(MessageCreateEvent messageCreateEvent, String message) {
-		// verifies there's enough arguments
-		if (message.split(" ").length > 2) {
-			// gets the command name
-			String command = message.split(" ")[1];
-			// gets the command description
-			String description = String.join(" ", Arrays.copyOfRange(message.split(" "), 2, message.split(" ").length));
+		// checks for enough args
+		if (message.split(" ").length == 3) {
+			// gets old name
+			String oldName = message.split(" ")[1];
+			// gets new name
+			String newName = message.split(" ")[2];
 			try {
-				commandService.registerEmbedCommand(command, description);
+				// command service saving the day again
+				commandService.renameCommand(oldName, newName);
+				// success embed
+				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.get(EmbedType.SUCCESS).build(oldName + " renamed to: " + newName));
+			} catch (CommandNotFoundException commandNotFoundException) {
+				// old command name doesn't exist error
+				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.COMMANDNOTFOUNDEXCEPTION).build(commandNotFoundException.getMessage()));
 			} catch (CommandNameTakenException commandNameTakenException) {
+				// new command name already exists
 				messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.error(EmbedType.COMMANDNAMETAKENEXCEPTION).build(commandNameTakenException.getMessage()));
 			}
 		} else {
-			// if there aren't enough arguments, lets the member know how to use the command
-			messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.getHelp(discordBotConfiguration.getCreateEmbedCommand()).build("if you're seeing this, please contact an admin!"));
+			messageCreateEvent.getChannel().sendMessage(embedGeneratorFactory.getHelp(discordBotConfiguration.getRenameCommand()).build("if you're seeing this pls contact mod"));
 		}
 	}
 }
