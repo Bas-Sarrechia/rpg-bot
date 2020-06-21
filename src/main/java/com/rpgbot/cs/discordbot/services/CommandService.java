@@ -2,12 +2,7 @@ package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
-import com.rpgbot.cs.discordbot.entities.Authorization;
-import com.rpgbot.cs.discordbot.entities.BasicCommand;
-import com.rpgbot.cs.discordbot.entities.Command;
-import com.rpgbot.cs.discordbot.entities.CommandType;
-import com.rpgbot.cs.discordbot.exception.CommandExistsException;
-import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
+import com.rpgbot.cs.discordbot.entities.*;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +28,6 @@ public class CommandService {
                 messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.PINK)
                         .setAuthor("Hi")
-
                 );
             }
         });
@@ -56,21 +50,23 @@ public class CommandService {
         return basicCommandDao.findByCommandCommandText(command);
     }
 
-    public void removeCommand(String commandName) {
-        commandDao.findByCommandText(commandName)
-                .ifPresentOrElse(commandDao::delete, () -> {
-                    throw new CommandNotExistsException(commandName);
-                });
+    public boolean removeCommand(String commandName) {
+        Optional<Command> command = commandDao.findByCommandText(commandName);
+        if (command.isPresent()) {
+            commandDao.delete(command.get());
+            return true;
+        }
+        return false;
     }
 
-    public void modifyCommand(String command, String respond) {
+    public boolean modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
-        } else {
-            throw new CommandNotExistsException(command);
+            return true;
         }
+        return false;
     }
 }
