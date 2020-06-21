@@ -1,7 +1,6 @@
 discordbot:
-  token: Njk0ODc0OTI1MTgxNDM1OTI2.XtGTiA.AeedtDX2YonVShPaknPeLpngJy0
-  prefix: '~'
-
+  token: NzE2MDY0MjAzMDE3ODE0MDYw.Xu1U3A.1ECHSdMwlDKnQ2BmFjYrhuYJRK0
+  prefix: '!'
 spring:
   datasource:
     driver-class-name: org.h2.Driver
@@ -9,7 +8,7 @@ spring:
     username: 'root'
     password: ''
   jpa:
-    show-sql: true
+    show-sql: false
   h2:
     console:
       enabled: true

@@ -2,15 +2,15 @@ package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
-import com.rpgbot.cs.discordbot.entities.*;
+import com.rpgbot.cs.discordbot.entities.Authorization;
+import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.CommandType;
+import com.rpgbot.cs.discordbot.exception.CommandExistsException;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.Basic;
 import java.awt.*;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,60 +25,47 @@ public class CommandService {
         this.commandDao = commandDao;
     }
 
-    @PostConstruct
-    private void addCharacterSelectionMenu(){
+    private void addCharacterSelectionMenu() {
         botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
             if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!characters")) {
 
                 messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.PINK)
                         .setAuthor("Hi")
-                        );
+
+                );
             }
         });
     }
 
-
-    public void addBasicCommandToBot(String command, String respond) {
-        BasicCommand daoCommand = basicCommandDao.findByCommandCommandText(command).orElse(null);
+    public void register(String command, String respond) {
+         lookUp(command).ifPresent(basicCommand -> {throw new CommandExistsException(command);});
+            BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
+                    .response(respond)
+                    .command(Command.builder()
+                            .commandText(command)
+                            .requiredAuthorization(Authorization.BASIC)
+                            .commandType(CommandType.BASIC)
+                            .build())
+                    .build());
+            basicCommandDao.save(basicCommand);
     }
 
-    public void registerBasicCommand(String command, String respond) {
-        BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
-                .response(respond)
-                .command(Command.builder()
-                        .commandText(command)
-                        .requiredAuthorization(Authorization.BASIC)
-                        .commandType(CommandType.BASIC)
-                        .build())
-                .build());
-        basicCommandDao.save(basicCommand);
-
+    public Optional<BasicCommand> lookUp(String command) {
+        return basicCommandDao.findByCommandCommandText(command);
     }
 
-    public BasicCommand lookUpCommand(String command) {
-        return basicCommandDao.findByCommandCommandText(command).orElse(null);
+    public void removeCommand(String commandName) {
+        commandDao.findByCommandText(commandName).ifPresent(commandDao::delete);
     }
 
-    public boolean removeCommand(String commandName) {
-        Optional<Command> command = commandDao.findByCommandText(commandName);
-        if (command.isPresent()) {
-            commandDao.delete(command.get());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean modifyCommand(String command, String respond) {
+    public void modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
-            return true;
         }
-        return false;
+
     }
-
-
 }
