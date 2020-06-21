@@ -26,14 +26,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.btobastian.sdcf4j</groupId>
-            <artifactId>sdcf4j-core</artifactId>
-            <version>v1.0.10</version>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
-            <groupId>de.btobastian.sdcf4j</groupId>
-            <artifactId>sdcf4j-javacord</artifactId>
-            <version>v1.0.10</version>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+            <version>4.0.0</version>
+            <classifier>models</classifier>
         </dependency>
         <dependency>
             <groupId>org.javacord</groupId>
