@@ -12,9 +12,6 @@ public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "user_id")
-    private DiscordUser discordUser;
     private String characterName;
     private boolean isActive;
 }

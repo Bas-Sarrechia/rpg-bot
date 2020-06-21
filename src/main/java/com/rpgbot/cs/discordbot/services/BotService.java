@@ -48,9 +48,9 @@ public class BotService {
 
                     applicationEventPublisher.publishEvent(new CommandMessageEvent(this, message, commandWithArgs[0].substring(this.discordBotConfiguration.getPrefix().length()),
                             ArrayUtil.copyOfSubArray(commandWithArgs, 1, commandWithArgs.length),
-                            messageCreateEvent.getMessageAuthor().getId(), messageCreateEvent.getChannel()));
+                            messageCreateEvent.getMessageAuthor().getId(), messageCreateEvent.getChannel(), messageCreateEvent));
                 } else {
-                    applicationEventPublisher.publishEvent(new DefaultMessageEvent(this, message, messageCreateEvent.getMessageAuthor().getId(), messageCreateEvent.getChannel()));
+                    applicationEventPublisher.publishEvent(new DefaultMessageEvent(this, message, messageCreateEvent.getMessageAuthor().getId(), messageCreateEvent.getChannel(), messageCreateEvent));
                 }
             }
         });

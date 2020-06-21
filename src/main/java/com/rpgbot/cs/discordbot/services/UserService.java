@@ -1,7 +1,10 @@
 package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
-import com.rpgbot.cs.discordbot.entities.DiscordUser;
+import com.rpgbot.cs.discordbot.entities.Authorization;
+import com.rpgbot.cs.discordbot.entities.User;
+import com.rpgbot.cs.discordbot.exception.UserExistsException;
+import com.rpgbot.cs.discordbot.exception.UserNotExistsException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,11 +16,19 @@ public class UserService {
     }
 
 
-    public void register(DiscordUser discordUser) {
-        this.discordUserDao.save(discordUser);
+    public void register(Long discordId) {
+        discordUserDao.findById(discordId).ifPresentOrElse(user -> {
+            throw new UserExistsException();
+        }, () -> {
+            User user = new User();
+            user.setId(discordId);
+            user.setAuthorization(Authorization.BASIC);
+            this.discordUserDao.save(user);
+        });
+
     }
 
-    public DiscordUser findUserById(long userId) {
-        return discordUserDao.findById(userId).orElse(null);
+    public User findUserById(long userId) {
+        return discordUserDao.findById(userId).orElseThrow(UserNotExistsException::new);
     }
 }

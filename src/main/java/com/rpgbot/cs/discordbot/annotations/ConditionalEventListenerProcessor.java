@@ -29,11 +29,11 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
         return bean;
     }
 
-    private ApplicationListener<CommandMessageEvent> createApplicationListener(Method m, Object bean, String command) {
+    private ApplicationListener<CommandMessageEvent> createApplicationListener(Method method, Object bean, String command) {
         return (CommandMessageEvent event) -> {
-            if (command.equals("") || event.getCommand().equals(command)) { // Filter here!
+            if (command.equals("") || event.getCommand().toLowerCase().equals(command.toLowerCase())) {
                 try {
-                    m.invoke(bean, event);
+                    method.invoke(bean, event);
                 } catch (IllegalAccessException | InvocationTargetException e1) {
                     e1.printStackTrace();
                 }
