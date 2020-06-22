@@ -1,5 +1,5 @@
 discordbot:
-  token: NzE2MDY0MjAzMDE3ODE0MDYw.Xu1U3A.1ECHSdMwlDKnQ2BmFjYrhuYJRK0
+  token: NzE2MDY0MjAzMDE3ODE0MDYw.Xu-qvA.XYLMdf0IorKs_7rBm3eiBndAips
   prefix: '!'
 spring:
   datasource:

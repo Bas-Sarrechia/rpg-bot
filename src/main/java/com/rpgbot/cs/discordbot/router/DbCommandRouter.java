@@ -3,7 +3,9 @@ package com.rpgbot.cs.discordbot.router;
 import com.rpgbot.cs.discordbot.annotations.Command;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.exception.CommandExistsException;
+import com.rpgbot.cs.discordbot.messagehandlers.DiscordMessage;
 import com.rpgbot.cs.discordbot.services.CommandService;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,24 +24,24 @@ public class DbCommandRouter {
 
     @Order(-1)
     @Command
-    public void dbCommand(final CommandMessageEvent commandMessageEvent) {
-        commandService.lookUp(commandMessageEvent.getCommand())
-                .ifPresent(basicCommand -> commandMessageEvent.getTarget().sendMessage(basicCommand.getResponse()));
+    public DiscordMessage dbCommand(final CommandMessageEvent commandMessageEvent) {
+        return commandService.lookUp(commandMessageEvent.getCommand())
+                .map(basicCommand -> DiscordMessage.plain(basicCommand.getResponse())).orElse(null);
     }
 
     @Command(alias = "addcommand")
-    public void addCommand(final CommandMessageEvent commandMessageEvent) {
+    public DiscordMessage addCommand(final CommandMessageEvent commandMessageEvent) {
         if (commandMessageEvent.getCommand().equals("addcommand")) {
             if (commandMessageEvent.getArgs().length >= 2) {
                 try {
                     commandService.register(commandMessageEvent.getArgs()[0], String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length)));
-                    commandMessageEvent.getTarget().sendMessage("command added");
                 } catch (CommandExistsException commandExistsException) {
-                    commandMessageEvent.sendError(commandMessageEvent.getArgs()[0] + " already exists!");
+                    return DiscordMessage.error(commandMessageEvent.getArgs()[0] + " already exists!");
                 }
             } else {
-                commandMessageEvent.sendError("addcommand <command> <respond>", "adds a static command to the bot");
+                return DiscordMessage.error("addcommand <command> <respond>", "adds a static command to the bot");
             }
         }
+        return DiscordMessage.plain("command added");
     }
 }
