@@ -6,6 +6,7 @@ import com.rpgbot.cs.discordbot.entities.User;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.exception.UserExistsException;
 import com.rpgbot.cs.discordbot.exception.UserNotExistsException;
+import com.rpgbot.cs.discordbot.messagehandlers.DiscordMessage;
 import com.rpgbot.cs.discordbot.services.UserService;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Component;
@@ -22,32 +23,33 @@ public class ProfileRouter {
     }
 
     @Command(alias = "register")
-    public void register(final CommandMessageEvent commandMessageEvent) {
+    public DiscordMessage register(final CommandMessageEvent commandMessageEvent) {
         try {
             userService.register(commandMessageEvent.getUser());
-            commandMessageEvent.getTarget().sendMessage("Registered!");
         } catch (UserExistsException userExistsException) {
-            commandMessageEvent.sendError(userExistsException.getMessage());
+            return DiscordMessage.error(userExistsException.getMessage());
         }
+        return DiscordMessage.plain("Registered!");
     }
 
     @Command(alias = "profile")
-    public void getProfile(final CommandMessageEvent commandMessageEvent) {
+    public DiscordMessage getProfile(final CommandMessageEvent commandMessageEvent) {
+        EmbedBuilder embedMessage = new EmbedBuilder();
         try {
             User user = this.userService.findUserById(commandMessageEvent.getUser());
-            EmbedBuilder embedMessage = new EmbedBuilder()
-                    .setAuthor(commandMessageEvent.getOrigin().getMessageAuthor())
+            embedMessage.setAuthor(commandMessageEvent.getOrigin().getMessageAuthor())
                     .setTitle("Profile");
             Set<Character> characters = user.getCharacters();
             characters.forEach(character -> {
                 embedMessage.addField(character.getCharacterName(), " TODO "); //TODO add character details (glod - lvl - profession - ...)
             });
             for (int i = characters.size(); i < User.MAX_CHARACTERS; i++) {
-                embedMessage.addField(String.valueOf(i+1), "Open slot");
+                embedMessage.addField(String.valueOf(i + 1), "Open slot");
             }
             commandMessageEvent.getTarget().sendMessage(embedMessage);
         } catch (UserNotExistsException exception) {
-            commandMessageEvent.sendError("Profile does not exist. Use the register command");
+            return DiscordMessage.error("Profile does not exist. Use the register command");
         }
+        return DiscordMessage.embedded(embedMessage);
     }
 }
