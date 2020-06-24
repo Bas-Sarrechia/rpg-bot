@@ -1,6 +1,7 @@
 package com.rpgbot.cs.discordbot.router;
 
 import com.rpgbot.cs.discordbot.annotations.Command;
+import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.exception.CommandExistsException;
 import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
@@ -38,7 +39,7 @@ public class DbCommandRouter {
             String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
             try {
                 commandService.register(command, response);
-                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.pink));
+                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.green));
             } catch (CommandExistsException commandExistsException) {
                 return DiscordMessage.error(commandExistsException .getMessage());
             }
@@ -59,5 +60,19 @@ public class DbCommandRouter {
             }
         }
         return DiscordMessage.error("Not Enough Arguments!");
+    }
+
+    @Command(alias = "removecommand")
+	public DiscordMessage removeCommand(final CommandMessageEvent commandMessageEvent) {
+    	if (commandMessageEvent.getArgs().length == 1) {
+    		String command = commandMessageEvent.getArgs()[0];
+    		try {
+			    commandService.removeCommand(command);
+			    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command removed!").setDescription(command).setColor(Color.green));
+		    } catch (CommandNotExistsException commandNotExistsException) {
+				return DiscordMessage.error(commandNotExistsException.getMessage());
+		    }
+	    }
+    	return DiscordMessage.error("Please only use one argument");
     }
 }

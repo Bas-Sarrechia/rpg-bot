@@ -56,8 +56,9 @@ public class CommandService {
         return basicCommandDao.findByCommandCommandText(command);
     }
 
-    public void removeCommand(String commandName) {
-        commandDao.findByCommandText(commandName).ifPresent(commandDao::delete);
+    public void removeCommand(String commandName) throws CommandNotExistsException {
+       Command command = commandDao.findByCommandText(commandName).orElseThrow(() -> new CommandNotExistsException(commandName));
+       commandDao.delete(command);
     }
 
     public void modifyCommand(String command, String respond) throws CommandNotExistsException {
