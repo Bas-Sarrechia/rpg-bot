@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.util.Arrays;
 
 @Component
@@ -33,26 +34,30 @@ public class DbCommandRouter {
     @Command(alias = "addcommand")
     public DiscordMessage addCommand(final CommandMessageEvent commandMessageEvent) {
         if (commandMessageEvent.getArgs().length >= 2) {
+            String command = commandMessageEvent.getArgs()[0];
+            String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
             try {
-                commandService.register(commandMessageEvent.getArgs()[0], String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length)));
+                commandService.register(command, response);
+                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.pink));
             } catch (CommandExistsException commandExistsException) {
-                return DiscordMessage.error(commandExistsException.getMessage());
+                return DiscordMessage.error(commandExistsException .getMessage());
             }
-        } else {
-            return DiscordMessage.error("addcommand <command> <respond>", "adds a static command to the bot");
         }
-        return DiscordMessage.plain("command added");
+        return DiscordMessage.error("Not Enough Arguments!");
     }
 
     @Command(alias = "modifycommand")
     public DiscordMessage editCommand(final CommandMessageEvent commandMessageEvent) {
         if (commandMessageEvent.getArgs().length >= 2) {
+            String command = commandMessageEvent.getArgs()[0];
+            String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
             try {
-                commandService.modifyCommand(commandMessageEvent.getArgs()[0], String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length)));
+                commandService.modifyCommand(command, response);
+                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Modified").setDescription(command + ": " + response).setColor(Color.pink));
             } catch (CommandNotExistsException commandNotExistsException) {
                 return DiscordMessage.error(commandNotExistsException.getMessage());
             }
         }
-        return DiscordMessage.plain("command modified");
+        return DiscordMessage.error("Not Enough Arguments!");
     }
 }
