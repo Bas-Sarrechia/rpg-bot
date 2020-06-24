@@ -1,6 +1,8 @@
 package com.rpgbot.cs.discordbot.annotations;
 
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
+import com.rpgbot.cs.discordbot.messagehandlers.DiscordMessage;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationListener;
@@ -20,7 +22,7 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        for (Method method: bean.getClass().getMethods()) {
+        for (Method method : bean.getClass().getMethods()) {
             if (method.isAnnotationPresent(Command.class)) {
                 Command annotation = method.getAnnotation(Command.class);
                 context.addApplicationListener(createApplicationListener(method, bean, annotation.alias()));
@@ -29,13 +31,30 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
         return bean;
     }
 
-    private ApplicationListener<CommandMessageEvent> createApplicationListener(Method m, Object bean, String command) {
+    private ApplicationListener<CommandMessageEvent> createApplicationListener(Method method, Object bean, String command) {
         return (CommandMessageEvent event) -> {
-            if (command.equals("") || event.getCommand().equals(command)) { // Filter here!
+            if (command.equals("") || event.getCommand().toLowerCase().equals(command.toLowerCase())) {
                 try {
-                    m.invoke(bean, event);
-                } catch (IllegalAccessException | InvocationTargetException e1) {
-                    e1.printStackTrace();
+                    Object value = method.invoke(bean, event);
+                    if (value instanceof DiscordMessage) {
+                        Object body = ((DiscordMessage) value).getBody();
+                        if (body instanceof String) {
+                            event.getTarget().sendMessage((String) body);
+                        } else if (body instanceof EmbedBuilder) {
+                            event.getTarget().sendMessage((EmbedBuilder) body).thenAcceptAsync(message ->
+                                    message.addReactions(((DiscordMessage) value).getEmojis()));;
+                            System.out.println(body);
+                            System.out.println(((DiscordMessage) value).getEmojis());
+                        }
+                    } else if (value instanceof String) {
+                        event.getTarget().sendMessage((String) value);
+                    } else if (value instanceof EmbedBuilder) {
+                        event.getTarget().sendMessage((EmbedBuilder) value);
+                    } else if (value != null) {
+                        throw new IllegalArgumentException("return type must be of DiscordMessage");
+                    }
+                } catch (IllegalAccessException | InvocationTargetException exception) {
+                    exception.printStackTrace();
                 }
             }
         };

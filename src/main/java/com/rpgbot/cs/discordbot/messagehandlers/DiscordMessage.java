@@ -1,6 +1,7 @@
 package com.rpgbot.cs.discordbot.messagehandlers;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
 import java.awt.*;
@@ -9,6 +10,8 @@ public class DiscordMessage {
 
     @Getter
     private final Object body;
+    @Getter @Setter
+    private String[] emojis;
 
     public DiscordMessage(String plain) {
         this.body = plain;

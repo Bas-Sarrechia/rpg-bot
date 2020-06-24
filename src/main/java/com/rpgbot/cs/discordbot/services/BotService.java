@@ -3,6 +3,7 @@ package com.rpgbot.cs.discordbot.services;
 import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.events.DefaultMessageEvent;
+import com.rpgbot.cs.discordbot.events.SelfEmbedReactionEvent;
 import lombok.Getter;
 import org.apache.lucene.util.ArrayUtil;
 import org.javacord.api.DiscordApi;
@@ -53,6 +54,15 @@ public class BotService {
                     applicationEventPublisher.publishEvent(new DefaultMessageEvent(this, message, messageCreateEvent.getMessageAuthor().getId(), messageCreateEvent.getChannel(), messageCreateEvent));
                 }
             }
+        });
+
+        this.getDiscordApi().addReactionAddListener(reactionAddEvent -> {
+            reactionAddEvent.getMessage().flatMap(message -> message.getAuthor().asUser()).ifPresent(user -> {
+                if (user.isYourself() && !reactionAddEvent.getUser().isYourself()) {
+                    String messageContent = reactionAddEvent.getMessageContent().orElse("");
+                    applicationEventPublisher.publishEvent(new SelfEmbedReactionEvent(this, reactionAddEvent.getUser().getId(), messageContent, reactionAddEvent.getChannel(), reactionAddEvent));
+                }
+            });
         });
     }
 }

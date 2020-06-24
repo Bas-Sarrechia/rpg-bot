@@ -9,7 +9,7 @@ import java.awt.*;
 
 
 @EqualsAndHashCode(callSuper = false)
-public class CommandMessageEvent extends AbstractDiscordEvent {
+public class CommandMessageEvent extends AbstractMessageEvent {
     private final String command;
     @Getter
     private final String[] args;
