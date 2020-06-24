@@ -7,6 +7,7 @@ import com.rpgbot.cs.discordbot.entities.BasicCommand;
 import com.rpgbot.cs.discordbot.entities.Command;
 import com.rpgbot.cs.discordbot.entities.CommandType;
 import com.rpgbot.cs.discordbot.exception.CommandExistsException;
+import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Service;
 
@@ -59,13 +60,15 @@ public class CommandService {
         commandDao.findByCommandText(commandName).ifPresent(commandDao::delete);
     }
 
-    public void modifyCommand(String command, String respond) {
+    public void modifyCommand(String command, String respond) throws CommandNotExistsException {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
+        } else {
+            // TODO replace this with a followup dialog "would you like to add it?"
+            throw new CommandNotExistsException(command);
         }
-
     }
 }
