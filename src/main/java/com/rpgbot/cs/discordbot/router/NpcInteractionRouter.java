@@ -20,7 +20,7 @@ public class NpcInteractionRouter {
         this.dialogService = dialogService;
     }
 
-    @Command(alias = "test")
+    @Command(alias = "test", tracked = true)
     public DiscordMessage displayDialog(final CommandMessageEvent commandMessageEvent) {
         Dialog dialog = dialogService.getDialog(0);
 
