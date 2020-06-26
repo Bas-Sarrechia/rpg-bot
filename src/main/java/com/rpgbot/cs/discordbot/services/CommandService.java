@@ -56,12 +56,12 @@ public class CommandService {
         return basicCommandDao.findByCommandCommandText(command);
     }
 
-    public void removeCommand(String commandName) throws CommandNotExistsException {
+    public void removeCommand(String commandName) {
        Command command = commandDao.findByCommandText(commandName).orElseThrow(() -> new CommandNotExistsException(commandName));
        commandDao.delete(command);
     }
 
-    public void modifyCommand(String command, String respond) throws CommandNotExistsException {
+    public void modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
