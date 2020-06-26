@@ -50,8 +50,8 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
                     } else if(value != null) {
                         throw new IllegalArgumentException("return type must be of DiscordMessage");
                     }
-                } catch (IllegalAccessException | InvocationTargetException e1) {
-                    e1.printStackTrace();
+                } catch (IllegalAccessException | InvocationTargetException exception) {
+                    exception.printStackTrace();
                 }
             }
         };

@@ -7,6 +7,7 @@ import java.util.Properties;
 
 @Service
 public class NLPService {
+            /*
     private final StanfordCoreNLP pipeline;
     private final BotService botService;
 
@@ -17,7 +18,7 @@ public class NLPService {
         properties.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
         pipeline = new StanfordCoreNLP(properties);
     }
-        /*
+
     @EventListener
     public void listen(DefaultMessageEvent defaultMessageEvent) {
 
