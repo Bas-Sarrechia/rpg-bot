@@ -34,45 +34,46 @@ public class DbCommandRouter {
 
     @Command(alias = "addcommand")
     public DiscordMessage addCommand(final CommandMessageEvent commandMessageEvent) {
-        if (commandMessageEvent.getArgs().length >= 2) {
-            String command = commandMessageEvent.getArgs()[0];
-            String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
-            try {
-                commandService.register(command, response);
-                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.green));
-            } catch (CommandExistsException commandExistsException) {
-                return DiscordMessage.error(commandExistsException .getMessage());
-            }
-        }
-        return DiscordMessage.error("Not Enough Arguments!");
+    	if (!validateCommandLength(commandMessageEvent)) return DiscordMessage.error("Not Enough Arguments!");
+
+	    String command = commandMessageEvent.getArgs()[0];
+	    String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
+	    try {
+		    commandService.register(command, response);
+		    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.green));
+	    } catch (CommandExistsException commandExistsException) {
+		    return DiscordMessage.error(commandExistsException .getMessage());
+	    }
     }
 
     @Command(alias = "modifycommand")
     public DiscordMessage editCommand(final CommandMessageEvent commandMessageEvent) {
-        if (commandMessageEvent.getArgs().length >= 2) {
-            String command = commandMessageEvent.getArgs()[0];
-            String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
-            try {
-                commandService.modifyCommand(command, response);
-                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Modified").setDescription(command + ": " + response).setColor(Color.pink));
-            } catch (CommandNotExistsException commandNotExistsException) {
-                return DiscordMessage.error(commandNotExistsException.getMessage());
-            }
-        }
-        return DiscordMessage.error("Not Enough Arguments!");
+    	if (!validateCommandLength(commandMessageEvent)) return DiscordMessage.error("Not Enough Arguments");
+
+	    String command = commandMessageEvent.getArgs()[0];
+	    String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
+	    try {
+		    commandService.modifyCommand(command, response);
+		    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Modified").setDescription(command + ": " + response).setColor(Color.pink));
+	    } catch (CommandNotExistsException commandNotExistsException) {
+		    return DiscordMessage.error(commandNotExistsException.getMessage());
+	    }
     }
 
     @Command(alias = "removecommand")
 	public DiscordMessage removeCommand(final CommandMessageEvent commandMessageEvent) {
-    	if (commandMessageEvent.getArgs().length == 1) {
-    		String command = commandMessageEvent.getArgs()[0];
-    		try {
-			    commandService.removeCommand(command);
-			    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command removed!").setDescription(command).setColor(Color.green));
-		    } catch (CommandNotExistsException commandNotExistsException) {
-				return DiscordMessage.error(commandNotExistsException.getMessage());
-		    }
+    	if (commandMessageEvent.getArgs().length != 1) return DiscordMessage.error("Please only use one argument");
+
+	    String command = commandMessageEvent.getArgs()[0];
+	    try {
+		    commandService.removeCommand(command);
+		    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command removed!").setDescription(command).setColor(Color.green));
+	    } catch (CommandNotExistsException commandNotExistsException) {
+		    return DiscordMessage.error(commandNotExistsException.getMessage());
 	    }
-    	return DiscordMessage.error("Please only use one argument");
+    }
+
+    private boolean validateCommandLength(final CommandMessageEvent commandMessageEvent) {
+    	return commandMessageEvent.getArgs().length >= 2;
     }
 }
