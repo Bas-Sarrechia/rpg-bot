@@ -1,7 +1,7 @@
 package com.rpgbot.cs.discordbot.router;
 
 import com.rpgbot.cs.discordbot.annotations.Command;
-import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.configuration.DiscordBotConfiguration;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.exception.CommandExistsException;
 import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
@@ -19,10 +19,12 @@ import java.util.Arrays;
 public class DbCommandRouter {
 
     private final CommandService commandService;
+    private final DiscordBotConfiguration discordBotConfiguration;
 
     @Autowired
-    public DbCommandRouter(CommandService commandService) {
+    public DbCommandRouter(CommandService commandService, DiscordBotConfiguration discordBotConfiguration) {
         this.commandService = commandService;
+	    this.discordBotConfiguration = discordBotConfiguration;
     }
 
     @Order(-1)
@@ -34,7 +36,9 @@ public class DbCommandRouter {
 
     @Command(alias = "addcommand")
     public DiscordMessage addCommand(final CommandMessageEvent commandMessageEvent) {
-    	if (!validateCommandLength(commandMessageEvent)) return DiscordMessage.error("Not Enough Arguments!");
+    	if (!validateCommandLength(commandMessageEvent)) {
+		    return DiscordMessage.error("usage: " + discordBotConfiguration.getPrefix() + "addcommand <command> <response>");
+	    }
 
 	    String command = commandMessageEvent.getArgs()[0];
 	    String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
@@ -48,7 +52,9 @@ public class DbCommandRouter {
 
     @Command(alias = "modifycommand")
     public DiscordMessage editCommand(final CommandMessageEvent commandMessageEvent) {
-    	if (!validateCommandLength(commandMessageEvent)) return DiscordMessage.error("Not Enough Arguments");
+    	if (!validateCommandLength(commandMessageEvent)) {
+		    return DiscordMessage.error("usage: " + discordBotConfiguration.getPrefix() + "modifycommand <command> <response>");
+	    }
 
 	    String command = commandMessageEvent.getArgs()[0];
 	    String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
