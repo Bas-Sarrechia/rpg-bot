@@ -58,7 +58,7 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
                     if (command.tracked() && messageCompletableFuture != null) {
                         messageCompletableFuture.thenAcceptAsync(message -> {
                             message.addReactions(((DiscordMessage) value).getEmojis());
-                            dialogService.track(message.getId(), event.getUser());
+                            dialogService.track(message.getId(), event.getUser(), ((DiscordMessage) value).getTrackedDialog());
                         });
                     }
 

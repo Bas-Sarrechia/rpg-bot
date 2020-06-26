@@ -8,6 +8,7 @@ import com.rpgbot.cs.discordbot.exception.DialogNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @Service
 public class DialogService {
@@ -28,7 +29,29 @@ public class DialogService {
         return dialog;
     }
 
-    public void track(long messageId, long invokedBy){
-        trackedMessageDao.save(new TrackedMessage(messageId, userService.findUserById(invokedBy)));
+    public void track(long messageId, long invokedBy, Dialog trackedDialog) {
+        trackedMessageDao.save(new TrackedMessage(messageId, userService.findUserById(invokedBy), trackedDialog, false));
+    }
+
+    @Transactional
+    public Map<String, Dialog> getTrackedMessageById(long id) {
+        TrackedMessage trackedMessage = trackedMessageDao.findById(id).orElseThrow(DialogNotFoundException::new);
+        Dialog dialog = trackedMessage.getTrackedDialog();
+        //region lazy-initialization
+        dialog.getFollowUp().size();
+        for (Dialog deepDialog : dialog.getFollowUp().values()) {
+            deepDialog.getFollowUp().size();
+        }
+        //endregion
+        return dialog.getFollowUp();
+    }
+
+    public void resolveTrackedMessage(long id) {
+        trackedMessageDao.findById(id).ifPresentOrElse(trackedMessage -> {
+            trackedMessage.setResolved(true);
+            trackedMessageDao.save(trackedMessage);
+        }, () -> {
+            throw new DialogNotFoundException();
+        });
     }
 }

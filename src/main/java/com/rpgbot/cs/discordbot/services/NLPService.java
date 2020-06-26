@@ -14,7 +14,7 @@ import java.util.Properties;
 
 @Service
 public class NLPService {
-            /*
+    /*
     private final StanfordCoreNLP pipeline;
     private final BotService botService;
 

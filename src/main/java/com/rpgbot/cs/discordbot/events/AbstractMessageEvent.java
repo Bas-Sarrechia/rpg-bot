@@ -9,9 +9,10 @@ import org.javacord.api.event.message.MessageCreateEvent;
 public class AbstractMessageEvent extends AbstractDiscordEvent {
 
     private final MessageCreateEvent origin;
-
+    private final String message;
     public AbstractMessageEvent(Object source, long user, String message, TextChannel target, MessageCreateEvent origin) {
-        super(source, user, message, target);
+        super(source, user, target);
+        this.message = message;
         this.origin = origin;
     }
 }

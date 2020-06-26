@@ -19,4 +19,7 @@ public class TrackedMessage {
     private Long id;
     @ManyToOne
     private User calledBy;
+    @ManyToOne()
+    private Dialog trackedDialog;
+    boolean resolved;
 }

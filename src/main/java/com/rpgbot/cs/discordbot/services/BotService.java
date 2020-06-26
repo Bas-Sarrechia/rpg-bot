@@ -39,6 +39,11 @@ public class BotService {
     }
 
     private void createDefaultListener() {
+        addMessageListener();
+        addReactionListener();
+    }
+
+    private void addMessageListener(){
         this.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
             String message = messageCreateEvent.getMessageContent();
             if (!messageCreateEvent.getMessageAuthor().asUser().map(User::isBot).orElse(false)) {
@@ -55,12 +60,12 @@ public class BotService {
                 }
             }
         });
-
+    }
+    private void addReactionListener(){
         this.getDiscordApi().addReactionAddListener(reactionAddEvent -> {
             reactionAddEvent.getMessage().flatMap(message -> message.getAuthor().asUser()).ifPresent(user -> {
                 if (user.isYourself() && !reactionAddEvent.getUser().isYourself()) {
-                    String messageContent = reactionAddEvent.getMessageContent().orElse("");
-                    applicationEventPublisher.publishEvent(new SelfEmbedReactionEvent(this, reactionAddEvent.getUser().getId(), messageContent, reactionAddEvent.getChannel(), reactionAddEvent));
+                    applicationEventPublisher.publishEvent(new SelfEmbedReactionEvent(this, reactionAddEvent.getUser().getId(), reactionAddEvent.getEmoji().asUnicodeEmoji().orElse(""), reactionAddEvent.getChannel(), reactionAddEvent));
                 }
             });
         });
