@@ -1,6 +1,5 @@
 package com.rpgbot.cs.discordbot.messagehandlers;
 
-import lombok.Builder;
 import lombok.Getter;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 
@@ -28,11 +27,11 @@ public class DiscordMessage {
     }
 
     public static DiscordMessage error(String description){
-        return new DiscordMessage(new EmbedBuilder().setTitle("Error!").setColor(Color.red).setDescription(description));
+        return new DiscordMessage(new EmbedBuilder().setColor(Color.red).setDescription(description));
     }
 
     public static DiscordMessage error(String description, String details){
-        return new DiscordMessage(new EmbedBuilder().setTitle("Error!").setColor(Color.red).addField(description, details));
+        return new DiscordMessage(new EmbedBuilder().setColor(Color.red).addField(description, details));
     }
 
     public static DiscordMessage error(EmbedBuilder embed){
