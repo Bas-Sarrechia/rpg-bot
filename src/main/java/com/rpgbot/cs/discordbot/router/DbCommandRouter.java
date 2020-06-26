@@ -75,6 +75,7 @@ public class DbCommandRouter {
 		    commandService.removeCommand(command);
 		    return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command removed!").setDescription(command).setColor(Color.green));
 	    } catch (CommandNotExistsException commandNotExistsException) {
+		    // TODO replace this with a followup dialog "would you like to add it?"
 		    return DiscordMessage.error(commandNotExistsException.getMessage());
 	    }
     }

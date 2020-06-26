@@ -70,7 +70,6 @@ public class CommandService {
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
         } else {
-            // TODO replace this with a followup dialog "would you like to add it?"
             throw new CommandNotExistsException(command);
         }
     }
