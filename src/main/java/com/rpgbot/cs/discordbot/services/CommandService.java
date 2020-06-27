@@ -2,15 +2,16 @@ package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
-import com.rpgbot.cs.discordbot.entities.*;
+import com.rpgbot.cs.discordbot.entities.Authorization;
+import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.CommandType;
+import com.rpgbot.cs.discordbot.exception.CommandExistsException;
+import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.user.User;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.Basic;
 import java.awt.*;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,84 +26,51 @@ public class CommandService {
         this.commandDao = commandDao;
     }
 
-    @PostConstruct
-    private void addCharacterSelectionMenu(){
+    private void addCharacterSelectionMenu() {
         botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
             if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!characters")) {
 
                 messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.PINK)
                         .setAuthor("Hi")
-                        );
+
+                );
             }
         });
     }
 
-    @PostConstruct
-    private void register(){
-        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith("!register")) {
-                Optional<User> discordUser = messageCreateEvent.getMessageAuthor().asUser();
-                if(discordUser.isPresent()){
-                   User user = discordUser.get();
-                    DiscordUser.builder()
-                            .id(user.getId())
-                            .preferredColor(Color.pink)
-                            .nickname("")
-                            .build();
-                }
-
-            }
-        });
+    public void register(String command, String respond) {
+         lookUp(command).ifPresent(basicCommand -> {throw new CommandExistsException(command);});
+            BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
+                    .response(respond)
+                    .command(Command.builder()
+                            .commandText(command)
+                            .requiredAuthorization(Authorization.BASIC)
+                            .commandType(CommandType.BASIC)
+                            .build())
+                    .build());
+            basicCommandDao.save(basicCommand);
     }
 
-//    public void addBasicCommandToBot(BasicCommand basicCommand) {
-//        botService.getDiscordApi().addMessageCreateListener(messageCreateEvent -> {
-//            if (messageCreateEvent.getMessageContent().toLowerCase().startsWith(basicCommand.getCommand().getCommandText().toLowerCase())) {
-//                // message             content                              starts with command
-//                messageCreateEvent.getChannel().sendMessage(basicCommand.getResponse());
-////                messageCreateEvent.getChannel().sendMessage("SARA TESTING SHIT");
-//            }
-//        });
-//    }
-
-    public void registerBasicCommand(String command, String respond) {
-        BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
-                .response(respond)
-                .command(Command.builder()
-                        .commandText(command)
-                        .requiredAuthorization(Authorization.BASIC)
-                        .commandType(CommandType.BASIC)
-                        .build())
-                .build());
-
-        basicCommandDao.save(basicCommand);
-
+    public Optional<BasicCommand> lookUp(String command) {
+        return basicCommandDao.findByCommandCommandText(command);
     }
 
-    public BasicCommand lookupCommand(String command) {
-        return basicCommandDao.findByCommandCommandText(command).orElse(null);
+    public void removeCommand(String commandName) {
+        commandDao.findByCommandText(commandName)
+                .ifPresentOrElse(commandDao::delete, () -> {
+                    throw new CommandNotExistsException(commandName);
+                });
     }
 
-    public boolean removeCommand(String commandName) {
-        Optional<Command> command = commandDao.findByCommandText(commandName);
-        if (command.isPresent()) {
-            commandDao.delete(command.get());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean modifyCommand(String command, String respond) {
+    public void modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
-            return true;
+        } else {
+            throw new CommandNotExistsException(command);
         }
-        return false;
     }
-
-
 }
