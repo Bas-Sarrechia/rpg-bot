@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.event.message.MessageCreateEvent;
 
 import java.awt.*;
 
@@ -14,8 +15,8 @@ public class CommandMessageEvent extends AbstractMessageEvent {
     private final String command;
     private final String[] args;
 
-    public CommandMessageEvent(Object source, String message, String command, String[] args, long user, TextChannel target) {
-        super(source, user, message, target);
+    public CommandMessageEvent(Object source, String message, String command, String[] args, long user, TextChannel target, MessageCreateEvent origin) {
+        super(source, user, message, target, origin);
         this.command = command;
         this.args = args;
     }
