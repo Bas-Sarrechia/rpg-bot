@@ -50,10 +50,12 @@ public class ReactionListener implements BeanPostProcessor {
                     }
                 }
 
-                if(messageCompletableFuture != null) {
+                if (messageCompletableFuture != null) {
                     messageCompletableFuture.thenAcceptAsync(message -> {
                         message.addReactions(propagatedMessage.getEmojis());
-                        dialogService.track(message.getId(), event.getUser(), propagatedMessage.getTrackedDialog());
+                        if (propagatedMessage.getTrackedDialog() != null) {
+                            dialogService.track(message.getId(), event.getUser(), propagatedMessage.getTrackedDialog());
+                        }
                     });
                 }
 

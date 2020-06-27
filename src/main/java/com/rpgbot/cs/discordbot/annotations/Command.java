@@ -10,5 +10,4 @@ import java.lang.annotation.*;
 @Order(0)
 public @interface Command {
     String alias() default "";
-    boolean tracked() default false;
 }

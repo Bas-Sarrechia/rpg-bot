@@ -9,9 +9,9 @@ import java.awt.*;
 
 
 @EqualsAndHashCode(callSuper = false)
+@Getter
 public class CommandMessageEvent extends AbstractMessageEvent {
     private final String command;
-    @Getter
     private final String[] args;
 
     public CommandMessageEvent(Object source, String message, String command, String[] args, long user, TextChannel target) {

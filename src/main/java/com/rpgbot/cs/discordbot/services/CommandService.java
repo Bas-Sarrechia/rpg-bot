@@ -2,7 +2,12 @@ package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.BasicCommandDao;
 import com.rpgbot.cs.discordbot.daos.CommandDao;
-import com.rpgbot.cs.discordbot.entities.*;
+import com.rpgbot.cs.discordbot.entities.Authorization;
+import com.rpgbot.cs.discordbot.entities.BasicCommand;
+import com.rpgbot.cs.discordbot.entities.Command;
+import com.rpgbot.cs.discordbot.entities.CommandType;
+import com.rpgbot.cs.discordbot.exception.CommandExistsException;
+import com.rpgbot.cs.discordbot.exception.CommandNotExistsException;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +39,9 @@ public class CommandService {
     }
 
     public void register(String command, String respond) {
-         lookUp(command).ifPresent(basicCommand -> {throw new CommandExistsException(command);});
+        basicCommandDao.findByCommandCommandText(command).ifPresentOrElse(basicCommand -> {
+            throw new CommandExistsException(command);
+        }, () -> {
             BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
                     .response(respond)
                     .command(Command.builder()
@@ -44,29 +51,29 @@ public class CommandService {
                             .build())
                     .build());
             basicCommandDao.save(basicCommand);
+        });
+
     }
 
-    public Optional<BasicCommand> lookUp(String command) {
-        return basicCommandDao.findByCommandCommandText(command);
+    public BasicCommand lookUp(String command) {
+        return basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotExistsException(command));
     }
 
-    public boolean removeCommand(String commandName) {
-        Optional<Command> command = commandDao.findByCommandText(commandName);
-        if (command.isPresent()) {
-            commandDao.delete(command.get());
-            return true;
-        }
-        return false;
+    public void removeCommand(String commandName) {
+        commandDao.findByCommandText(commandName)
+                .ifPresentOrElse(commandDao::delete, () -> {
+                    throw new CommandNotExistsException(commandName);
+                });
     }
 
-    public boolean modifyCommand(String command, String respond) {
+    public void modifyCommand(String command, String respond) {
         Optional<BasicCommand> basicCommandOptional = basicCommandDao.findByCommandCommandText(command);
         if (basicCommandOptional.isPresent()) {
             BasicCommand basicCommand = basicCommandOptional.get();
             basicCommand.setResponse(respond);
             basicCommandDao.save(basicCommand);
-            return true;
+        } else {
+            throw new CommandNotExistsException(command);
         }
-        return false;
     }
 }

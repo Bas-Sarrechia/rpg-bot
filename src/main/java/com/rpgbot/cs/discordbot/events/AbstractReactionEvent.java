@@ -7,7 +7,6 @@ import org.javacord.api.event.message.reaction.ReactionAddEvent;
 import org.javacord.api.event.message.reaction.ReactionEvent;
 
 @Getter
-@Setter
 public class AbstractReactionEvent extends AbstractDiscordEvent {
     private final ReactionEvent origin;
     private final String emoji;

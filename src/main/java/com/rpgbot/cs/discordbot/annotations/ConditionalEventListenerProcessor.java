@@ -40,26 +40,31 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
 
     private ApplicationListener<CommandMessageEvent> createApplicationListener(Method method, Object bean, Command command) {
         return (CommandMessageEvent event) -> {
-            if (command.equals("") || event.getCommand().toLowerCase().equals(command.alias().toLowerCase())) {
+            if (command.alias().isEmpty() || event.getCommand().toLowerCase().equals(command.alias().toLowerCase())) {
                 try {
                     Object value = method.invoke(bean, event);
                     CompletableFuture<Message> messageCompletableFuture = null;
                     if (value instanceof DiscordMessage) {
-                        Object body = ((DiscordMessage) value).getBody();
+                        final DiscordMessage discordMessage = ((DiscordMessage) value);
+                        final Object body = discordMessage.getBody();
                         if (body instanceof String) {
                             messageCompletableFuture = event.getTarget().sendMessage((String) body);
                         } else if (body instanceof EmbedBuilder) {
                             messageCompletableFuture = event.getTarget().sendMessage((EmbedBuilder) body);
+                        } else if (body != null) {
+                            throw new IllegalArgumentException("return body must be of type String or EmbedBuilder.");
                         }
-                    } else if (value != null) {
-                        throw new IllegalArgumentException("return type must be of DiscordMessage");
-                    }
+                        event.setHasPropagated(true);
 
-                    if (command.tracked() && messageCompletableFuture != null) {
-                        messageCompletableFuture.thenAcceptAsync(message -> {
-                            message.addReactions(((DiscordMessage) value).getEmojis());
-                            dialogService.track(message.getId(), event.getUser(), ((DiscordMessage) value).getTrackedDialog());
-                        });
+                        if (discordMessage.getTrackedDialog() != null && messageCompletableFuture != null) {
+                            messageCompletableFuture.thenAcceptAsync(message -> {
+                                message.addReactions(discordMessage.getEmojis());
+                                dialogService.track(message.getId(), event.getUser(), discordMessage.getTrackedDialog());
+                            });
+                        }
+
+                    } else {
+                        throw new IllegalArgumentException("return type must be of DiscordMessage");
                     }
 
                 } catch (IllegalAccessException | InvocationTargetException exception) {

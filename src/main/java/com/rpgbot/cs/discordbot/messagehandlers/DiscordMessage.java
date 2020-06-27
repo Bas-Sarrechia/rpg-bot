@@ -12,50 +12,24 @@ public class DiscordMessage {
 
     @Getter
     private Object body;
-    @Setter @Getter
+    @Setter
+    @Getter
     private String[] emojis;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Dialog trackedDialog;
 
     private DiscordMessage() {
         this.body = null;
     }
 
-    public static class DiscordMessageBuilder {
-        private final DiscordMessage discordMessage;
-
-        public DiscordMessageBuilder() {
-            this.discordMessage = new DiscordMessage();
-        }
-
-        public DiscordMessageBuilder setEmojis(String[] emojis) {
-            discordMessage.setEmojis(emojis);
-            return this;
-        }
-
-        public DiscordMessageBuilder setBody(String body) {
-            this.discordMessage.body = body;
-            return this;
-        }
-
-        public DiscordMessageBuilder setBody(EmbedBuilder body) {
-            this.discordMessage.body = body;
-            return this;
-        }
-
-        public DiscordMessageBuilder setTrackedDialog(Dialog dialog) {
-            this.discordMessage.trackedDialog = dialog;
-            return this;
-        }
-
-        public DiscordMessage build() {
-            return this.discordMessage;
-        }
-    }
-
     public DiscordMessage setTrackedDialog(Dialog dialog) {
         this.trackedDialog = dialog;
         return this;
+    }
+
+    public static DiscordMessage empty() {
+        return new DiscordMessage();
     }
 
     public DiscordMessage setEmojis(String[] emojis) {

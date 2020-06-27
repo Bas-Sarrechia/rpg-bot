@@ -5,6 +5,7 @@ import com.rpgbot.cs.discordbot.annotations.Reaction;
 import com.rpgbot.cs.discordbot.entities.Dialog;
 import com.rpgbot.cs.discordbot.events.CommandMessageEvent;
 import com.rpgbot.cs.discordbot.events.SelfEmbedReactionEvent;
+import com.rpgbot.cs.discordbot.exception.IllegalTrackedException;
 import com.rpgbot.cs.discordbot.messagehandlers.DiscordMessage;
 import com.rpgbot.cs.discordbot.services.DialogService;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
@@ -23,7 +24,7 @@ public class NpcInteractionRouter {
         this.dialogService = dialogService;
     }
 
-    @Command(alias = "test", tracked = true)
+    @Command(alias = "test")
     public DiscordMessage displayDialog(final CommandMessageEvent commandMessageEvent) {
         Dialog dialog = dialogService.getDialog(0);
         return buildDialog(dialog);
@@ -31,10 +32,17 @@ public class NpcInteractionRouter {
 
     @Reaction(tracked = true)
     public DiscordMessage followUp(final SelfEmbedReactionEvent selfEmbedReactionEvent) {
-        Map<String, Dialog> followUp = dialogService.getTrackedMessageById(selfEmbedReactionEvent.getOrigin().getMessageId());
-        Dialog dialog = followUp.get(selfEmbedReactionEvent.getEmoji());
-        return buildDialog(dialog);
+        try {
+            Map<String, Dialog> followUp = dialogService.followUpTrackedMessage(selfEmbedReactionEvent.getOrigin().getMessageId(), selfEmbedReactionEvent.getUser());
+            if (!followUp.isEmpty()) {
+                Dialog dialog = followUp.get(selfEmbedReactionEvent.getEmoji());
+                return buildDialog(dialog);
+            }
+        } catch (IllegalTrackedException ignored) {
+        }
+        return DiscordMessage.empty();
     }
+
     private DiscordMessage buildDialog(Dialog dialog) {
         EmbedBuilder embed = new EmbedBuilder().setColor(Color.pink);
         DiscordMessage message = DiscordMessage.embedded(embed);
