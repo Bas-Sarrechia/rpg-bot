@@ -33,14 +33,15 @@ public class CommandService {
                 messageCreateEvent.getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.PINK)
                         .setAuthor("Hi")
-
                 );
             }
         });
     }
 
     public void register(String command, String respond) {
-         lookUp(command).ifPresent(basicCommand -> {throw new CommandExistsException(command);});
+        basicCommandDao.findByCommandCommandText(command).ifPresentOrElse(basicCommand -> {
+            throw new CommandExistsException(command);
+        }, () -> {
             BasicCommand basicCommand = basicCommandDao.save(BasicCommand.builder()
                     .response(respond)
                     .command(Command.builder()
@@ -50,10 +51,12 @@ public class CommandService {
                             .build())
                     .build());
             basicCommandDao.save(basicCommand);
+        });
+
     }
 
-    public Optional<BasicCommand> lookUp(String command) {
-        return basicCommandDao.findByCommandCommandText(command);
+    public BasicCommand lookUp(String command) {
+        return basicCommandDao.findByCommandCommandText(command).orElseThrow(() -> new CommandNotExistsException(command));
     }
 
     public void removeCommand(String commandName) {

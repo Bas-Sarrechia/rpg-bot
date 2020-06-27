@@ -7,7 +7,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class DefaultMessageEvent extends AbstractDiscordEvent {
+public class DefaultMessageEvent extends AbstractMessageEvent {
     public DefaultMessageEvent(Object source, String message, long user, TextChannel target, MessageCreateEvent origin) {
         super(source, user, message, target, origin);
     }

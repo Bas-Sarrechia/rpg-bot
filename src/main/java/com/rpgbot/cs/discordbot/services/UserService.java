@@ -1,6 +1,7 @@
 package com.rpgbot.cs.discordbot.services;
 
 import com.rpgbot.cs.discordbot.daos.DiscordUserDao;
+import com.rpgbot.cs.discordbot.entities.DiscordUser;
 import com.rpgbot.cs.discordbot.entities.Authorization;
 import com.rpgbot.cs.discordbot.entities.User;
 import com.rpgbot.cs.discordbot.exception.UserExistsException;
