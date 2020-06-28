@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -43,34 +44,40 @@ public class ConditionalEventListenerProcessor implements BeanPostProcessor {
             if (command.alias().isEmpty() || event.getCommand().toLowerCase().equals(command.alias().toLowerCase())) {
                 try {
                     Object value = method.invoke(bean, event);
-                    CompletableFuture<Message> messageCompletableFuture = null;
                     if (value instanceof DiscordMessage) {
-                        final DiscordMessage discordMessage = ((DiscordMessage) value);
-                        final Object body = discordMessage.getBody();
-                        if (body instanceof String) {
-                            messageCompletableFuture = event.getTarget().sendMessage((String) body);
-                        } else if (body instanceof EmbedBuilder) {
-                            messageCompletableFuture = event.getTarget().sendMessage((EmbedBuilder) body);
-                        } else if (body != null) {
-                            throw new IllegalArgumentException("return body must be of type String or EmbedBuilder.");
-                        }
-                        event.setHasPropagated(true);
+                        Optional<CompletableFuture<Message>> messageCompletableFuture = ((DiscordMessage<?>) value).getBody().map(body -> {
+                            event.setHasPropagated(true);
+                            Optional<CompletableFuture<Message>> optional = Optional.empty();
+                            if (body instanceof String) {
+                                optional = Optional.of(event.getTarget().sendMessage((String) body));
+                            } else if (body instanceof EmbedBuilder) {
+                                optional = Optional.of(event.getTarget().sendMessage((EmbedBuilder) body));
+                            }
+                            return optional;
+                        }).orElse(Optional.empty());
 
-                        if (discordMessage.getTrackedDialog() != null && messageCompletableFuture != null) {
-                            messageCompletableFuture.thenAcceptAsync(message -> {
-                                message.addReactions(discordMessage.getEmojis());
-                                dialogService.track(message.getId(), event.getUser(), discordMessage.getTrackedDialog());
-                            });
-                        }
+                        final DiscordMessage<?> discordMessage = ((DiscordMessage<?>) value);
+
+                        attachTracker(event, messageCompletableFuture, discordMessage);
 
                     } else {
                         throw new IllegalArgumentException("return type must be of DiscordMessage");
                     }
-
                 } catch (IllegalAccessException | InvocationTargetException exception) {
                     exception.printStackTrace();
                 }
             }
         };
+    }
+
+    private void attachTracker(CommandMessageEvent event, Optional<CompletableFuture<Message>> messageCompletableFuture, DiscordMessage<?> discordMessage) {
+        messageCompletableFuture.ifPresent(completedMessage -> completedMessage
+                .thenAcceptAsync( message -> {
+                    if (discordMessage.getTrackedDialog() != null) {
+                        message.addReactions(discordMessage.getEmojis());
+                        dialogService.track(message.getId(), event.getUser(), discordMessage.getTrackedDialog());
+                    }
+                }
+        ));
     }
 }
