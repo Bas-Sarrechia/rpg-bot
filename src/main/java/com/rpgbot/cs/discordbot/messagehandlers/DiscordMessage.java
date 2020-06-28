@@ -65,4 +65,11 @@ public class DiscordMessage {
         return new DiscordMessage(embed.setColor(Color.red));
     }
 
+    public static DiscordMessage success(String description) {
+        return new DiscordMessage(new EmbedBuilder().setColor(Color.green).setDescription(description));
+    }
+
+    public static DiscordMessage success(String title, String description) {
+        return new DiscordMessage(new EmbedBuilder().setColor(Color.green).setTitle(title).setDescription(description));
+    }
 }
