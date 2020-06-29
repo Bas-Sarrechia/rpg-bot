@@ -44,7 +44,7 @@ public class DbCommandRouter {
             String response = String.join(" ", Arrays.copyOfRange(commandMessageEvent.getArgs(), 1, commandMessageEvent.getArgs().length));
             try {
                 commandService.register(command, response);
-                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command Added").setDescription(command + ": " + response).setColor(Color.green));
+                return DiscordMessage.success("Command Added", command + ": " + response);
             } catch (CommandExistsException commandExistsException) {
                 return DiscordMessage.error(commandExistsException .getMessage());
             }
@@ -73,13 +73,13 @@ public class DbCommandRouter {
             String command = commandMessageEvent.getArgs()[0];
             try {
                 commandService.removeCommand(command);
-                return DiscordMessage.embedded(new EmbedBuilder().setTitle("Command removed!").setDescription(command).setColor(Color.green));
+                return DiscordMessage.success("Command removed", command);
             } catch (CommandNotExistsException commandNotExistsException) {
                 // TODO replace this with a followup dialog "would you like to add it?"
                 return DiscordMessage.error(commandNotExistsException.getMessage());
             }
         }
-        return DiscordMessage.error("Please only use one argument");
+        return DiscordMessage.error("Please provide one argument");
     }
 
     private boolean validateCommandLength(final CommandMessageEvent commandMessageEvent) {

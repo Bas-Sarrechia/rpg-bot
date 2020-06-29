@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -39,28 +40,29 @@ public class ReactionListener implements BeanPostProcessor {
     private ApplicationListener<SelfEmbedReactionEvent> createApplicationListener(Method method, Object bean, Reaction command) {
         return (SelfEmbedReactionEvent event) -> {
             try {
-                DiscordMessage propagatedMessage = ((DiscordMessage) method.invoke(bean, event));
-                CompletableFuture<Message> messageCompletableFuture = null;
+                DiscordMessage<?> propagatedMessage = ((DiscordMessage<?>) method.invoke(bean, event));
+                Optional<CompletableFuture<Message>> messageCompletableFuture = Optional.empty();
                 if (propagatedMessage != null) {
-                    propagatedMessage.getBody();
-                    if (propagatedMessage.getBody() instanceof EmbedBuilder) {
-                        messageCompletableFuture = event.getTarget().sendMessage((EmbedBuilder) propagatedMessage.getBody());
-                    } else if (propagatedMessage.getBody() instanceof String) {
-                        messageCompletableFuture = event.getTarget().sendMessage((String) propagatedMessage.getBody());
-                    }
-                }
-
-                if (messageCompletableFuture != null) {
-                    messageCompletableFuture.thenAcceptAsync(message -> {
-                        message.addReactions(propagatedMessage.getEmojis());
-                        if (propagatedMessage.getTrackedDialog() != null) {
-                            dialogService.track(message.getId(), event.getUser(), propagatedMessage.getTrackedDialog());
+                   messageCompletableFuture = propagatedMessage.getBody().map(body -> {
+                        Optional<CompletableFuture<Message>> optional = Optional.empty();
+                        if (body instanceof EmbedBuilder) {
+                            optional =Optional.of( event.getTarget().sendMessage((EmbedBuilder) body));
+                        } else if (body instanceof String) {
+                            optional = Optional.of(event.getTarget().sendMessage((String) body));
                         }
-                    });
+                        return optional;
+                    }).orElse(Optional.empty());
                 }
 
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                messageCompletableFuture.ifPresent(future-> future.thenAcceptAsync(message -> {
+                    message.addReactions(propagatedMessage.getEmojis());
+                    if (propagatedMessage.getTrackedDialog() != null) {
+                        dialogService.track(message.getId(), event.getUser(), propagatedMessage.getTrackedDialog());
+                    }
+                }));
+
+            } catch (IllegalAccessException | InvocationTargetException exception) {
+                exception.printStackTrace();
             }
         };
     }

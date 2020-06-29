@@ -29,7 +29,7 @@ public class ProfileRouter {
         } catch (UserExistsException userExistsException) {
             return DiscordMessage.error(userExistsException.getMessage());
         }
-        return DiscordMessage.plain("Registered!");
+        return DiscordMessage.success("Account registered!");
     }
 
     @Command(alias = "profile")
